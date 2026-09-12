@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аварийные заявки - Лифты</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
+        
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab {
+            flex: 1; padding: 12px; background: white;
+            border: 2px solid #ddd; border-radius: 8px;
+            text-align: center; cursor: pointer; font-weight: 600;
+        }
+        .tab.active { background: #2196F3; color: white; border-color: #2196F3; }
+        
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #555; font-size: 14px; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 2px solid #ddd;
+            border-radius: 8px; font-size: 16px; font-family: inherit;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        
+        button {
+            width: 100%; padding: 14px; background: #2196F3; color: white;
+            border: none; border-radius: 8px; font-size: 16px;
+            font-weight: 600; cursor: pointer; margin-top: 8px;
+        }
+        button:active { background: #1976D2; }
+        .btn-secondary { background: #757575; }
+        .btn-success { background: #4CAF50; }
+        .btn-warning { background: #FF9800; }
+        .btn-danger { background: #f44336; }
+        
+        .request-card {
+            background: white; padding: 16px; border-radius: 12px;
+            margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .request-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 12px;
+        }
+        .request-date { font-size: 12px; color: #999; }
+        .status-badge {
+            padding: 4px 12px; border-radius: 12px;
+            font-size: 12px; font-weight: 600;
+        }
+        .status-new { background: #FFC107; color: #000; }
+        .status-progress { background: #2196F3; color: white; }
+        .status-done { background: #4CAF50; color: white; }
+        .request-info { font-size: 14px; line-height: 1.6; }
+        .request-info strong { color: #333; }
+        .request-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .request-actions button { flex: 1; padding: 8px; font-size: 14px; margin: 0; }
+        
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-bar select { flex: 1; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #999; }
+        .hidden { display: none; }
+        
+        .sync-info {
+            background: #E3F2FD; padding: 12px; border-radius: 8px;
+            margin-bottom: 16px; font-size: 13px; color: #1565C0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛗 Аварийные заявки</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('list')">Список</div>
+            <div class="tab" onclick="showTab('add')">+ Новая</div>
+            <div class="tab" onclick="showTab('sync')">☁️ Синхр.</div>
+        </div>
+        
+        <!-- Форма добавления -->
+        <div id="addTab" class="hidden">
+            <form id="requestForm">
+                <div class="form-group">
+                    <label>Дата и время *</label>
+                    <input type="datetime-local" id="dateTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Адрес объекта *</label>
+                    <input type="text" id="address" placeholder="ул. Ленина, д. 10" required>
+                </div>
+                <div class="form-group">
+                    <label>Подъезд *</label>
+                    <input type="text" id="entrance" placeholder="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Номер лифта *</label>
+                    <input type="text" id="elevator" placeholder="Л-1" required>
+                </div>
+                <div class="form-group">
+                    <label>Этаж *</label>
+                    <input type="text" id="floor" placeholder="5" required>
+                </div>
+                <div class="form-group">
+                    <label>Характер неисправности *</label>
+                    <textarea id="issue" placeholder="Застревание людей, не закрываются двери..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Статус *</label>
+                    <select id="status" required>
+                        <option value="new">Новая</option>
+                        <option value="progress">В работе</option>
+                        <option value="done">Выполнена</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
+                </div>
+                <button type="submit">Сохранить заявку</button>
+            </form>
+        </div>
+        
+        <!-- Список заявок -->
+        <div id="listTab">
+            <div class="filter-bar">
+                <select id="filterStatus" onchange="renderRequests()">
+                    <option value="all">Все статусы</option>
+                    <option value="new">Новые</option>
+                    <option value="progress">В работе</option>
+                    <option value="done">Выполненные</option>
+                </select>
+            </div>
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу или лифту..." 
+                   oninput="renderRequests()" style="margin-bottom: 16px;">
+            <div id="requestsList"></div>
+        </div>
+        
+        <!-- Синхронизация -->
+        <div id="syncTab" class="hidden">
+            <div class="sync-info">
+                💡 <strong>Как синхронизировать с Яндекс.Диском:</strong><br>
+                1. Нажмите «Экспорт» — скачается файл <code>zayavki.json</code><br>
+                2. Откройте приложение Яндекс.Диска и загрузите файл в папку<br>
+                3. Файл автоматически синхронизируется с облаком<br>
+                4. На другом устройстве — «Импорт» для восстановления
+            </div>
+            
+            <button onclick="exportToJSON()" class="btn-success">📤 Экспорт в файл (JSON)</button>
+            <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (для Excel)</button>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Импорт из файла</label>
+                <input type="file" id="importFile" accept=".json" onchange="importFromJSON(event)">
+            </div>
+            
+            <button onclick="clearAllData()" class="btn-danger" style="margin-top: 20px;">🗑️ Очистить все данные</button>
+            
+            <div style="margin-top: 20px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
+                📊 <strong>Статистика:</strong><br>
+                Всего заявок: <span id="statTotal">0</span><br>
+                Новых: <span id="statNew">0</span> | В работе: <span id="statProgress">0</span> | Выполнено: <span id="statDone">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let requests = JSON.parse(localStorage.getItem('elevatorRequests') || '[]');
+        
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('dateTime').value = now.toISOString().slice(0, 16);
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', 
+                    (tab === 'list' && i === 0) || 
+                    (tab === 'add' && i === 1) || 
+                    (tab === 'sync' && i === 2));
+            });
+            document.getElementById('addTab').classList.toggle('hidden', tab !== 'add');
+            document.getElementById('listTab').classList.toggle('hidden', tab !== 'list');
+            document.getElementById('syncTab').classList.toggle('hidden', tab !== 'sync');
+            
+            if (tab === 'list') renderRequests();
+            if (tab === 'sync') updateStats();
+        }
+        
+        document.getElementById('requestForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const request = {
+                id: Date.now(),
+                dateTime: document.getElementById('dateTime').value,
+                address: document.getElementById('address').value,
+                entrance: document.getElementById('entrance').value,
+                elevator: document.getElementById('elevator').value,
+                floor: document.getElementById('floor').value,
+                issue: document.getElementById('issue').value,
+                status: document.getElementById('status').value,
+                comment: document.getElementById('comment').value
+            };
+            requests.unshift(request);
+            localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+            e.target.reset();
+            const now2 = new Date();
+            now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
+            document.getElementById('dateTime').value = now2.toISOString().slice(0, 16);
+            showTab('list');
+            alert('✅ Заявка сохранена');
+        });
+        
+        function renderRequests() {
+            const filter = document.getElementById('filterStatus').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = requests.filter(r => {
+                const matchStatus = filter === 'all' || r.status === filter;
+                const matchSearch = !search || 
+                    r.address.toLowerCase().includes(search) ||
+                    r.elevator.toLowerCase().includes(search);
+                return matchStatus && matchSearch;
+            });
+            const container = document.getElementById('requestsList');
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">Нет заявок</div>';
+                return;
+            }
+            container.innerHTML = filtered.map(r => {
+                const date = new Date(r.dateTime).toLocaleString('ru-RU');
+                const statusText = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}[r.status];
+                return `
+                    <div class="request-card">
+                        <div class="request-header">
+                            <span class="request-date">${date}</span>
+                            <span class="status-badge status-${r.status}">${statusText}</span>
+                        </div>
+                        <div class="request-info">
+                            <strong>📍 ${r.address}</strong><br>
+                            Подъезд: ${r.entrance} | Лифт: ${r.elevator} | Этаж: ${r.floor}<br>
+                            <strong>Неисправность:</strong> ${r.issue}
+                            ${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}
+                        </div>
+                        <div class="request-actions">
+                            <button onclick="changeStatus(${r.id})">Статус</button>
+                            <button onclick="deleteRequest(${r.id})" class="btn-danger">Удалить</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function changeStatus(id) {
+            const request = requests.find(r => r.id === id);
+            const statuses = ['new', 'progress', 'done'];
+            const currentIndex = statuses.indexOf(request.status);
+            request.status = statuses[(currentIndex + 1) % statuses.length];
+            localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+            renderRequests();
+        }
+        
+        function deleteRequest(id) {
+            if (confirm('Удалить заявку?')) {
+                requests = requests.filter(r => r.id !== id);
+                localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+                renderRequests();
+            }
+        }
+        
+        // === СИНХРОНИЗАЦИЯ ===
+        
+        function exportToJSON() {
+            const data = JSON.stringify(requests, null, 2);
+            const blob = new Blob([data], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            alert('✅ Файл сохранён. Загрузите его в Яндекс.Диск.');
+        }
+        
+        function exportToCSV() {
+            const headers = ['Дата', 'Адрес', 'Подъезд', 'Лифт', 'Этаж', 'Неисправность', 'Статус', 'Комментарий'];
+            const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'};
+            const rows = requests.map(r => [
+                new Date(r.dateTime).toLocaleString('ru-RU'),
+                r.address, r.entrance, r.elevator, r.floor,
+                r.issue, statusMap[r.status], r.comment || ''
+            ]);
+            const csv = [headers, ...rows]
+                .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+                .join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+        
+        function importFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!Array.isArray(imported)) throw new Error('Неверный формат');
+                    if (confirm(`Импортировать ${imported.length} заявок? Текущие данные будут заменены.`)) {
+                        requests = imported;
+                        localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+                        alert('✅ Данные импортированы');
+                        updateStats();
+                    }
+                } catch (err) {
+                    alert('❌ Ошибка: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function clearAllData() {
+            if (confirm('Удалить ВСЕ заявки? Это действие нельзя отменить!')) {
+                if (confirm('Точно уверены?')) {
+                    requests = [];
+                    localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+                    alert('✅ Все данные удалены');
+                    updateStats();
+                }
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('statTotal').textContent = requests.length;
+            document.getElementById('statNew').textContent = requests.filter(r => r.status === 'new').length;
+            document.getElementById('statProgress').textContent = requests.filter(r => r.status === 'progress').length;
+            document.getElementById('statDone').textContent = requests.filter(r => r.status === 'done').length;
+        }
+        
+        showTab('list');
+    </script>
+</body>
+</html>
