@@ -106,7 +106,7 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder=" Поиск по адресу, лифту..." 
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу, лифту..." 
                    oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
@@ -177,7 +177,7 @@
                     <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
                 </div>
                 
-                <button type="submit"> Сохранить заявку</button>
+                <button type="submit">💾 Сохранить заявку</button>
             </form>
         </div>
         
@@ -196,7 +196,7 @@
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newProblemName" placeholder="Напр. Застревание людей" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
-                <button onclick="saveProblem()" id="saveProbBtn">➕ Добавить проблему</button>
+                <button onclick="saveProblem()" id="saveProbBtn"> Добавить проблему</button>
             </div>
             <div id="problemsList"></div>
         </div>
@@ -212,7 +212,7 @@
                     <label>Client ID</label>
                     <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
                 </div>
-                <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить Client ID</button>
+                <button onclick="saveClientId()" class="btn-secondary"> Сохранить Client ID</button>
                 <button onclick="startOAuth()">🔐 Войти через Яндекс</button>
             </div>
             
@@ -221,11 +221,11 @@
                     ✅ <strong>Подключено к Яндекс.Диску</strong><br>
                     Файл: <code>/Apps/АварийныеЗаявки/zayavki.json</code>
                 </div>
-                <button onclick="syncNow()" class="btn-success">🔄 Синхронизировать сейчас</button>
+                <button onclick="syncNow()" class="btn-success"> Синхронизировать сейчас</button>
                 <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (Excel)</button>
                 <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                     <strong>Статистика:</strong><br>
+                    📊 <strong>Статистика:</strong><br>
                     Всего заявок: <span id="statTotal">0</span><br>
                     Объектов в базе: <span id="statObj">0</span> | Видов проблем: <span id="statProb">0</span><br>
                     Последняя синхр.: <span id="lastSync">—</span>
@@ -240,6 +240,7 @@
         const CLIENT_ID_KEY = 'yandexClientId';
         const SYNC_KEY = 'lastSyncTime';
         const FILE_PATH = 'disk:/Apps/АварийныеЗаявки/zayavki.json';
+        const FOLDER_PATH = 'disk:/Apps/АварийныеЗаявки';
         
         // Загрузка данных из localStorage
         let requests = JSON.parse(localStorage.getItem('requests') || '[]');
@@ -280,7 +281,7 @@
                     window.history.replaceState({}, '', window.location.pathname);
                     updateUI();
                     alert('✅ Яндекс.Диск подключён!');
-                    syncNow();
+                    setTimeout(syncNow, 1000);
                 }
             }
         }
@@ -307,7 +308,6 @@
 
         // === УПРАВЛЕНИЕ БАЗОЙ ДАННЫХ ===
         function renderDB() {
-            // Объекты
             const objList = document.getElementById('objectsList');
             if (objectsDB.length === 0) {
                 objList.innerHTML = '<div class="empty-state">Нет объектов</div>';
@@ -326,7 +326,6 @@
                 `).join('');
             }
 
-            // Проблемы
             const probList = document.getElementById('problemsList');
             if (problemsDB.length === 0) {
                 probList.innerHTML = '<div class="empty-state">Нет видов проблем</div>';
@@ -412,7 +411,7 @@
             }
         }
 
-        // --- Проблемы ---
+                // --- Проблемы ---
         function saveProblem() {
             const name = document.getElementById('newProblemName').value.trim();
             const editId = document.getElementById('editProblemId').value;
@@ -423,7 +422,7 @@
                 const prob = problemsDB.find(p => p.id == editId);
                 prob.name = name;
                 document.getElementById('editProblemId').value = '';
-                document.getElementById('saveProbBtn').textContent = ' Добавить проблему';
+                document.getElementById('saveProbBtn').textContent = '➕ Добавить проблему';
             } else {
                 problemsDB.push({ id: Date.now(), name });
             }
@@ -482,7 +481,6 @@
             now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
             document.getElementById('dateTime').value = now2.toISOString().slice(0, 16);
             
-            // Переключаемся на список
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector('[data-tab="list"]').classList.add('active');
             document.getElementById('addTab').classList.add('hidden');
@@ -554,9 +552,9 @@
                 renderRequests();
                 if (yandexToken) setTimeout(syncNow, 500);
             }
-        }
+            }
 
-        // === ЯНДЕКС.ДИСК API И СИНХРОНИЗАЦИЯ ===
+                // === ЯНДЕКС.ДИСК API ===
         function updateUI() {
             const statusEl = document.getElementById('syncStatus');
             if (yandexToken) {
@@ -613,6 +611,7 @@
             return response;
         }
 
+        // === СИНХРОНИЗАЦИЯ (ИСПРАВЛЕНА ОШИБКА 409) ===
         async function syncNow() {
             if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
             const btn = document.querySelector('#connected button');
@@ -621,17 +620,30 @@
             btn.disabled = true;
 
             try {
-                // 0. Создаём папку, если её нет
-                const folderPath = 'disk:/Apps/АварийныеЗаявки';
+                // 0. Создаём папку, если её нет. Ошибка 409 = папка уже есть, это нормально.
                 try {
-                    const folderUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(folderPath)}`;
-                    const folderCheck = await yandexFetch(folderUrl);
-                    if (!folderCheck.ok) throw new Error('Папка не найдена');
+                    const createFolderUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FOLDER_PATH)}`;
+                    const folderResp = await fetch(createFolderUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `OAuth ${yandexToken}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    if (folderResp.status === 409) {
+                        console.log('ℹ️ Папка уже существует — продолжаем');
+                    } else if (folderResp.status === 401) {
+                        yandexToken = '';
+                        localStorage.removeItem(YANDEX_TOKEN_KEY);
+                        updateUI();
+                        throw new Error('Токен истёк. Подключите Яндекс.Диск заново.');
+                    } else if (!folderResp.ok && folderResp.status !== 409) {
+                        console.warn('Не удалось создать папку, код:', folderResp.status);
+                    } else {
+                        console.log('✅ Папка создана');
+                    }
                 } catch (e) {
-                    // Папки нет — создаём
-                    const createFolderUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(folderPath)}`;
-                    await yandexFetch(createFolderUrl, { method: 'PUT' });
-                    console.log('✅ Папка создана');
+                    console.warn('Ошибка при создании папки:', e.message);
                 }
 
                 // 1. Скачиваем существующий файл (если есть)
@@ -658,7 +670,8 @@
                         cloudProblems = cloudData.problems || [];
                     }
                 }
-                                // Мердж заявок
+
+                // Мердж заявок
                 const localReqIds = new Set(requests.map(r => r.id));
                 for (const cr of cloudRequests) {
                     if (!localReqIds.has(cr.id)) requests.push(cr);
