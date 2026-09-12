@@ -3,26 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аварийные заявки - Лифты</title>
+    <title>袗胁邪褉懈泄薪褘械 蟹邪褟胁泻懈 - 袥懈褎褌褘</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 16px;
-            padding-bottom: 80px;
+            background: #f5f5f5; padding: 16px; padding-bottom: 80px;
         }
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
-        
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
         .tab {
             flex: 1; padding: 12px; background: white;
             border: 2px solid #ddd; border-radius: 8px;
-            text-align: center; cursor: pointer; font-weight: 600;
+            text-align: center; cursor: pointer; font-weight: 600; font-size: 14px;
         }
         .tab.active { background: #2196F3; color: white; border-color: #2196F3; }
-        
         .form-group { margin-bottom: 16px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; color: #555; font-size: 14px; }
         input, select, textarea {
@@ -30,18 +26,16 @@
             border-radius: 8px; font-size: 16px; font-family: inherit;
         }
         textarea { resize: vertical; min-height: 80px; }
-        
         button {
             width: 100%; padding: 14px; background: #2196F3; color: white;
             border: none; border-radius: 8px; font-size: 16px;
             font-weight: 600; cursor: pointer; margin-top: 8px;
         }
         button:active { background: #1976D2; }
+        button:disabled { background: #BDBDBD; cursor: not-allowed; }
         .btn-secondary { background: #757575; }
         .btn-success { background: #4CAF50; }
-        .btn-warning { background: #FF9800; }
         .btn-danger { background: #f44336; }
-        
         .request-card {
             background: white; padding: 16px; border-radius: 12px;
             margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -62,138 +56,258 @@
         .request-info strong { color: #333; }
         .request-actions { display: flex; gap: 8px; margin-top: 12px; }
         .request-actions button { flex: 1; padding: 8px; font-size: 14px; margin: 0; }
-        
         .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
         .filter-bar select { flex: 1; }
         .empty-state { text-align: center; padding: 40px 20px; color: #999; }
         .hidden { display: none; }
-        
-        .sync-info {
+        .sync-status {
+            padding: 12px; border-radius: 8px; margin-bottom: 16px;
+            font-size: 13px; text-align: center;
+        }
+        .sync-ok { background: #E8F5E9; color: #2E7D32; }
+        .sync-off { background: #FFF3E0; color: #E65100; }
+        .info-box {
             background: #E3F2FD; padding: 12px; border-radius: 8px;
-            margin-bottom: 16px; font-size: 13px; color: #1565C0;
+            margin-bottom: 16px; font-size: 13px; color: #1565C0; line-height: 1.5;
+        }
+        .debug-box {
+            background: #FFF9C4; padding: 12px; border-radius: 8px;
+            margin-top: 16px; font-size: 12px; font-family: monospace;
+            max-height: 200px; overflow-y: auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛗 Аварийные заявки</h1>
+        <h1>馃洍 袗胁邪褉懈泄薪褘械 蟹邪褟胁泻懈</h1>
+        <div id="syncStatus" class="sync-status sync-off">鈽侊笍 袨斜谢邪泻芯 薪械 锌芯写泻谢褞褔械薪芯</div>
         
         <div class="tabs">
-            <div class="tab active" onclick="showTab('list')">Список</div>
-            <div class="tab" onclick="showTab('add')">+ Новая</div>
-            <div class="tab" onclick="showTab('sync')">☁️ Синхр.</div>
+            <div class="tab active" data-tab="list">小锌懈褋芯泻</div>
+            <div class="tab" data-tab="add">+ 袧芯胁邪褟</div>
+            <div class="tab" data-tab="sync">鈽侊笍 袨斜谢邪泻芯</div>
         </div>
         
-        <!-- Форма добавления -->
+        <!-- 肖芯褉屑邪 写芯斜邪胁谢械薪懈褟 -->
         <div id="addTab" class="hidden">
             <form id="requestForm">
                 <div class="form-group">
-                    <label>Дата и время *</label>
+                    <label>袛邪褌邪 懈 胁褉械屑褟 *</label>
                     <input type="datetime-local" id="dateTime" required>
                 </div>
                 <div class="form-group">
-                    <label>Адрес объекта *</label>
-                    <input type="text" id="address" placeholder="ул. Ленина, д. 10" required>
+                    <label>袗写褉械褋 芯斜褗械泻褌邪 *</label>
+                    <input type="text" id="address" placeholder="褍谢. 袥械薪懈薪邪, 写. 10" required>
                 </div>
                 <div class="form-group">
-                    <label>Подъезд *</label>
+                    <label>袩芯写褗械蟹写 *</label>
                     <input type="text" id="entrance" placeholder="1" required>
                 </div>
                 <div class="form-group">
-                    <label>Номер лифта *</label>
-                    <input type="text" id="elevator" placeholder="Л-1" required>
+                    <label>袧芯屑械褉 谢懈褎褌邪 *</label>
+                    <input type="text" id="elevator" placeholder="袥-1" required>
                 </div>
                 <div class="form-group">
-                    <label>Этаж *</label>
+                    <label>协褌邪卸 *</label>
                     <input type="text" id="floor" placeholder="5" required>
                 </div>
                 <div class="form-group">
-                    <label>Характер неисправности *</label>
-                    <textarea id="issue" placeholder="Застревание людей, не закрываются двери..." required></textarea>
+                    <label>啸邪褉邪泻褌械褉 薪械懈褋锌褉邪胁薪芯褋褌懈 *</label>
+                    <textarea id="issue" placeholder="袟邪褋褌褉械胁邪薪懈械 谢褞写械泄, 薪械 蟹邪泻褉褘胁邪褞褌褋褟 写胁械褉懈..." required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Статус *</label>
+                    <label>小褌邪褌褍褋 *</label>
                     <select id="status" required>
-                        <option value="new">Новая</option>
-                        <option value="progress">В работе</option>
-                        <option value="done">Выполнена</option>
+                        <option value="new">袧芯胁邪褟</option>
+                        <option value="progress">袙 褉邪斜芯褌械</option>
+                        <option value="done">袙褘锌芯谢薪械薪邪</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Комментарий</label>
-                    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
+                    <label>袣芯屑屑械薪褌邪褉懈泄</label>
+                    <textarea id="comment" placeholder="袛芯锌芯谢薪懈褌械谢褜薪邪褟 懈薪褎芯褉屑邪褑懈褟..."></textarea>
                 </div>
-                <button type="submit">Сохранить заявку</button>
+                <button type="submit">小芯褏褉邪薪懈褌褜 蟹邪褟胁泻褍</button>
             </form>
         </div>
         
-        <!-- Список заявок -->
+        <!-- 小锌懈褋芯泻 蟹邪褟胁芯泻 -->
         <div id="listTab">
             <div class="filter-bar">
                 <select id="filterStatus" onchange="renderRequests()">
-                    <option value="all">Все статусы</option>
-                    <option value="new">Новые</option>
-                    <option value="progress">В работе</option>
-                    <option value="done">Выполненные</option>
+                    <option value="all">袙褋械 褋褌邪褌褍褋褘</option>
+                    <option value="new">袧芯胁褘械</option>
+                    <option value="progress">袙 褉邪斜芯褌械</option>
+                    <option value="done">袙褘锌芯谢薪械薪薪褘械</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу или лифту..." 
+            <input type="text" id="searchInput" placeholder="馃攳 袩芯懈褋泻 锌芯 邪写褉械褋褍 懈谢懈 谢懈褎褌褍..." 
                    oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
         
-        <!-- Синхронизация -->
+        <!-- 小懈薪褏褉芯薪懈蟹邪褑懈褟 -->
         <div id="syncTab" class="hidden">
-            <div class="sync-info">
-                💡 <strong>Как синхронизировать с Яндекс.Диском:</strong><br>
-                1. Нажмите «Экспорт» — скачается файл <code>zayavki.json</code><br>
-                2. Откройте приложение Яндекс.Диска и загрузите файл в папку<br>
-                3. Файл автоматически синхронизируется с облаком<br>
-                4. На другом устройстве — «Импорт» для восстановления
+            <div class="info-box">
+                <strong>馃攽 袙邪褕 Client ID:</strong><br>
+                <code id="displayClientId">袧械 蟹邪写邪薪</code>
             </div>
             
-            <button onclick="exportToJSON()" class="btn-success">📤 Экспорт в файл (JSON)</button>
-            <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (для Excel)</button>
-            
-            <div class="form-group" style="margin-top: 20px;">
-                <label>Импорт из файла</label>
-                <input type="file" id="importFile" accept=".json" onchange="importFromJSON(event)">
+            <div class="form-group">
+                <label>Client ID 携薪写械泻褋</label>
+                <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
             </div>
             
-            <button onclick="clearAllData()" class="btn-danger" style="margin-top: 20px;">🗑️ Очистить все данные</button>
+            <button id="saveClientIdBtn">馃捑 小芯褏褉邪薪懈褌褜 Client ID</button>
+            <button id="startOAuthBtn">馃攼 袙芯泄褌懈 褔械褉械蟹 携薪写械泻褋</button>
+            <button id="disconnectBtn" class="btn-danger">馃毆 袨褌泻谢褞褔懈褌褜 携薪写械泻褋.袛懈褋泻</button>
             
-            <div style="margin-top: 20px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                📊 <strong>Статистика:</strong><br>
-                Всего заявок: <span id="statTotal">0</span><br>
-                Новых: <span id="statNew">0</span> | В работе: <span id="statProgress">0</span> | Выполнено: <span id="statDone">0</span>
+            <div class="debug-box" id="debugLog">
+                <strong>袞褍褉薪邪谢:</strong><br>
             </div>
         </div>
     </div>
 
     <script>
-        let requests = JSON.parse(localStorage.getItem('elevatorRequests') || '[]');
+        // === 袣袨袧肖袠袚校袪袗笑袠携 ===
+        const YANDEX_TOKEN_KEY = 'yandexToken';
+        const DATA_KEY = 'elevatorRequests';
+        const CLIENT_ID_KEY = 'yandexClientId';
+        const FILE_PATH = 'disk:/Apps/袗胁邪褉懈泄薪褘械袟邪褟胁泻懈/zayavki.json';
         
+        let requests = JSON.parse(localStorage.getItem(DATA_KEY) || '[]');
+        let yandexToken = localStorage.getItem(YANDEX_TOKEN_KEY) || '';
+        let YANDEX_CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
+        
+        // === 袨孝袥袗袛袣袗 ===
+        function log(message) {
+            const debugEl = document.getElementById('debugLog');
+            const time = new Date().toLocaleTimeString('ru-RU');
+            debugEl.innerHTML += `[${time}] ${message}<br>`;
+            debugEl.scrollTop = debugEl.scrollHeight;
+            console.log(message);
+        }
+        
+        log('袩褉懈谢芯卸械薪懈械 蟹邪锌褍褖械薪芯');
+        log(`Client ID: ${YANDEX_CLIENT_ID || '薪械 蟹邪写邪薪'}`);
+        log(`孝芯泻械薪: ${yandexToken ? '械褋褌褜' : '薪械褌'}`);
+        
+        // === 袠袧袠笑袠袗袥袠袟袗笑袠携 ===
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('dateTime').value = now.toISOString().slice(0, 16);
         
-        function showTab(tab) {
-            document.querySelectorAll('.tab').forEach((t, i) => {
-                t.classList.toggle('active', 
-                    (tab === 'list' && i === 0) || 
-                    (tab === 'add' && i === 1) || 
-                    (tab === 'sync' && i === 2));
-            });
-            document.getElementById('addTab').classList.toggle('hidden', tab !== 'add');
-            document.getElementById('listTab').classList.toggle('hidden', tab !== 'list');
-            document.getElementById('syncTab').classList.toggle('hidden', tab !== 'sync');
-            
-            if (tab === 'list') renderRequests();
-            if (tab === 'sync') updateStats();
+        if (YANDEX_CLIENT_ID) {
+            document.getElementById('clientIdInput').value = YANDEX_CLIENT_ID;
+            document.getElementById('displayClientId').textContent = YANDEX_CLIENT_ID;
         }
         
-        document.getElementById('requestForm').addEventListener('submit', (e) => {
+        // === 袨袘袪袗袘袨孝袣袗 REDIRECT 袨孝 携袧袛袝袣小袗 ===
+        function handleOAuthRedirect() {
+            const hash = window.location.hash;
+            if (hash && hash.includes('access_token')) {
+                log('袩芯谢褍褔械薪 redirect 芯褌 携薪写械泻褋邪');
+                const params = new URLSearchParams(hash.substring(1));
+                const token = params.get('access_token');
+                if (token) {
+                    yandexToken = token;
+                    localStorage.setItem(YANDEX_TOKEN_KEY, token);
+                    window.history.replaceState({}, '', window.location.pathname);
+                    log('鉁� 孝芯泻械薪 锌芯谢褍褔械薪 懈 褋芯褏褉邪薪褢薪');
+                    updateUI();
+                    alert('鉁� 携薪写械泻褋.袛懈褋泻 锌芯写泻谢褞褔褢薪!');
+                }
+            }
+        }
+        handleOAuthRedirect();
+        
+        // === 袩袝袪袝袣袥挟效袝袧袠袝 袙袣袥袗袛袨袣 ===
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                log(`袩械褉械泻谢褞褔械薪懈械 薪邪 胁泻谢邪写泻褍: ${tabName}`);
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.getElementById('addTab').classList.add('hidden');
+                document.getElementById('listTab').classList.add('hidden');
+                document.getElementById('syncTab').classList.add('hidden');
+                
+                if (tabName === 'list') {
+                    document.getElementById('listTab').classList.remove('hidden');
+                    renderRequests();
+                } else if (tabName === 'add') {
+                    document.getElementById('addTab').classList.remove('hidden');
+                } else if (tabName === 'sync') {
+                    document.getElementById('syncTab').classList.remove('hidden');
+                    updateUI();
+                }
+            });
+        });
+        
+        // === UI ===
+        function updateUI() {
+            log('袨斜薪芯胁谢械薪懈械 UI');
+            const statusEl = document.getElementById('syncStatus');
+            
+            if (yandexToken) {
+                statusEl.className = 'sync-status sync-ok';
+                statusEl.textContent = '鈽侊笍 袩芯写泻谢褞褔械薪芯 泻 携薪写械泻褋.袛懈褋泻褍';
+                log('小褌邪褌褍褋: 锌芯写泻谢褞褔械薪芯');
+            } else {
+                statusEl.className = 'sync-status sync-off';
+                statusEl.textContent = '鈽侊笍 袨斜谢邪泻芯 薪械 锌芯写泻谢褞褔械薪芯';
+                log('小褌邪褌褍褋: 薪械 锌芯写泻谢褞褔械薪芯');
+            }
+        }
+        
+        // === 袣袧袨袩袣袠 ===
+        document.getElementById('saveClientIdBtn').addEventListener('click', function() {
+            log('袧邪卸邪褌邪 泻薪芯锌泻邪 褋芯褏褉邪薪械薪懈褟 Client ID');
+            const clientId = document.getElementById('clientIdInput').value.trim();
+            if (!clientId) {
+                alert('鉂� 袙胁械写懈褌械 Client ID');
+                log('鉂� Client ID 锌褍褋褌芯泄');
+                return;
+            }
+            YANDEX_CLIENT_ID = clientId;
+            localStorage.setItem(CLIENT_ID_KEY, clientId);
+            document.getElementById('displayClientId').textContent = clientId;
+            alert('鉁� Client ID 褋芯褏褉邪薪褢薪');
+            log(`鉁� Client ID 褋芯褏褉邪薪褢薪: ${clientId}`);
+        });
+        
+        document.getElementById('startOAuthBtn').addEventListener('click', function() {
+            log('袧邪卸邪褌邪 泻薪芯锌泻邪 胁褏芯写邪 褔械褉械蟹 携薪写械泻褋');
+            if (!YANDEX_CLIENT_ID) {
+                alert('鉂� 小薪邪褔邪谢邪 胁胁械写懈褌械 懈 褋芯褏褉邪薪懈褌械 Client ID');
+                log('鉂� Client ID 薪械 蟹邪写邪薪');
+                return;
+            }
+            const redirectUri = window.location.origin + window.location.pathname;
+            log(`Redirect URI: ${redirectUri}`);
+            const url = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+            log(`袩械褉械褏芯写 薪邪: ${url}`);
+            window.location.href = url;
+        });
+        
+        document.getElementById('disconnectBtn').addEventListener('click', function() {
+            log('袧邪卸邪褌邪 泻薪芯锌泻邪 芯褌泻谢褞褔械薪懈褟');
+            if (confirm('袨褌泻谢褞褔懈褌褜 携薪写械泻褋.袛懈褋泻? 袛邪薪薪褘械 胁 锌褉懈谢芯卸械薪懈懈 芯褋褌邪薪褍褌褋褟.')) {
+                localStorage.removeItem(YANDEX_TOKEN_KEY);
+                yandexToken = '';
+                updateUI();
+                alert('鉁� 携薪写械泻褋.袛懈褋泻 芯褌泻谢褞褔褢薪');
+                log('鉁� 袨褌泻谢褞褔械薪芯');
+            }
+        });
+        
+        // === 袪袗袘袨孝袗 小 袟袗携袙袣袗袦袠 ===
+        document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            log('肖芯褉屑邪 芯褌锌褉邪胁谢械薪邪');
+            
             const request = {
                 id: Date.now(),
                 dateTime: document.getElementById('dateTime').value,
@@ -203,16 +317,28 @@
                 floor: document.getElementById('floor').value,
                 issue: document.getElementById('issue').value,
                 status: document.getElementById('status').value,
-                comment: document.getElementById('comment').value
+                comment: document.getElementById('comment').value,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             };
+            
             requests.unshift(request);
-            localStorage.setItem('elevatorRequests', JSON.stringify(requests));
-            e.target.reset();
+            localStorage.setItem(DATA_KEY, JSON.stringify(requests));
+            log(`鉁� 袟邪褟胁泻邪 写芯斜邪胁谢械薪邪: ${request.address}`);
+            
+            this.reset();
             const now2 = new Date();
             now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
             document.getElementById('dateTime').value = now2.toISOString().slice(0, 16);
-            showTab('list');
-            alert('✅ Заявка сохранена');
+            
+            // 袩械褉械泻谢褞褔邪械屑褋褟 薪邪 褋锌懈褋芯泻
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-tab="list"]').classList.add('active');
+            document.getElementById('addTab').classList.add('hidden');
+            document.getElementById('listTab').classList.remove('hidden');
+            renderRequests();
+            
+            alert('鉁� 袟邪褟胁泻邪 褋芯褏褉邪薪械薪邪');
         });
         
         function renderRequests() {
@@ -227,12 +353,12 @@
             });
             const container = document.getElementById('requestsList');
             if (filtered.length === 0) {
-                container.innerHTML = '<div class="empty-state">Нет заявок</div>';
+                container.innerHTML = '<div class="empty-state">袧械褌 蟹邪褟胁芯泻</div>';
                 return;
             }
             container.innerHTML = filtered.map(r => {
                 const date = new Date(r.dateTime).toLocaleString('ru-RU');
-                const statusText = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}[r.status];
+                const statusText = {new: '袧芯胁邪褟', progress: '袙 褉邪斜芯褌械', done: '袙褘锌芯谢薪械薪邪'}[r.status];
                 return `
                     <div class="request-card">
                         <div class="request-header">
@@ -240,14 +366,14 @@
                             <span class="status-badge status-${r.status}">${statusText}</span>
                         </div>
                         <div class="request-info">
-                            <strong>📍 ${r.address}</strong><br>
-                            Подъезд: ${r.entrance} | Лифт: ${r.elevator} | Этаж: ${r.floor}<br>
-                            <strong>Неисправность:</strong> ${r.issue}
-                            ${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}
+                            <strong>馃搷 ${r.address}</strong><br>
+                            袩芯写褗械蟹写: ${r.entrance} | 袥懈褎褌: ${r.elevator} | 协褌邪卸: ${r.floor}<br>
+                            <strong>袧械懈褋锌褉邪胁薪芯褋褌褜:</strong> ${r.issue}
+                            ${r.comment ? `<br><strong>袣芯屑屑械薪褌邪褉懈泄:</strong> ${r.comment}` : ''}
                         </div>
                         <div class="request-actions">
-                            <button onclick="changeStatus(${r.id})">Статус</button>
-                            <button onclick="deleteRequest(${r.id})" class="btn-danger">Удалить</button>
+                            <button onclick="changeStatus(${r.id})">小褌邪褌褍褋</button>
+                            <button onclick="deleteRequest(${r.id})" class="btn-danger">校写邪谢懈褌褜</button>
                         </div>
                     </div>
                 `;
@@ -259,88 +385,25 @@
             const statuses = ['new', 'progress', 'done'];
             const currentIndex = statuses.indexOf(request.status);
             request.status = statuses[(currentIndex + 1) % statuses.length];
-            localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+            request.updatedAt = new Date().toISOString();
+            localStorage.setItem(DATA_KEY, JSON.stringify(requests));
+            log(`小褌邪褌褍褋 懈蟹屑械薪褢薪: ${request.address}`);
             renderRequests();
         }
         
         function deleteRequest(id) {
-            if (confirm('Удалить заявку?')) {
+            if (confirm('校写邪谢懈褌褜 蟹邪褟胁泻褍?')) {
                 requests = requests.filter(r => r.id !== id);
-                localStorage.setItem('elevatorRequests', JSON.stringify(requests));
+                localStorage.setItem(DATA_KEY, JSON.stringify(requests));
+                log('袟邪褟胁泻邪 褍写邪谢械薪邪');
                 renderRequests();
             }
         }
         
-        // === СИНХРОНИЗАЦИЯ ===
-        
-        function exportToJSON() {
-            const data = JSON.stringify(requests, null, 2);
-            const blob = new Blob([data], { type: 'application/json;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            alert('✅ Файл сохранён. Загрузите его в Яндекс.Диск.');
-        }
-        
-        function exportToCSV() {
-            const headers = ['Дата', 'Адрес', 'Подъезд', 'Лифт', 'Этаж', 'Неисправность', 'Статус', 'Комментарий'];
-            const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'};
-            const rows = requests.map(r => [
-                new Date(r.dateTime).toLocaleString('ru-RU'),
-                r.address, r.entrance, r.elevator, r.floor,
-                r.issue, statusMap[r.status], r.comment || ''
-            ]);
-            const csv = [headers, ...rows]
-                .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-                .join('\n');
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-        }
-        
-        function importFromJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (!Array.isArray(imported)) throw new Error('Неверный формат');
-                    if (confirm(`Импортировать ${imported.length} заявок? Текущие данные будут заменены.`)) {
-                        requests = imported;
-                        localStorage.setItem('elevatorRequests', JSON.stringify(requests));
-                        alert('✅ Данные импортированы');
-                        updateStats();
-                    }
-                } catch (err) {
-                    alert('❌ Ошибка: ' + err.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-        
-        function clearAllData() {
-            if (confirm('Удалить ВСЕ заявки? Это действие нельзя отменить!')) {
-                if (confirm('Точно уверены?')) {
-                    requests = [];
-                    localStorage.setItem('elevatorRequests', JSON.stringify(requests));
-                    alert('✅ Все данные удалены');
-                    updateStats();
-                }
-            }
-        }
-        
-        function updateStats() {
-            document.getElementById('statTotal').textContent = requests.length;
-            document.getElementById('statNew').textContent = requests.filter(r => r.status === 'new').length;
-            document.getElementById('statProgress').textContent = requests.filter(r => r.status === 'progress').length;
-            document.getElementById('statDone').textContent = requests.filter(r => r.status === 'done').length;
-        }
-        
-        showTab('list');
+        // 袠薪懈褑懈邪谢懈蟹邪褑懈褟
+        updateUI();
+        renderRequests();
+        log('鉁� 袩褉懈谢芯卸械薪懈械 谐芯褌芯胁芯 泻 褉邪斜芯褌械');
     </script>
 </body>
 </html>
