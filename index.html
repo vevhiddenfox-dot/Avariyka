@@ -82,6 +82,10 @@
             background: #E3F2FD; padding: 12px; border-radius: 8px;
             margin-bottom: 16px; font-size: 13px; color: #1565C0; line-height: 1.5;
         }
+        .info-box code {
+            background: white; padding: 2px 6px; border-radius: 4px;
+            font-family: monospace; font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -188,7 +192,7 @@
                 <input type="text" id="newObjName" placeholder="Название объекта (напр. ЖК Лайм)" style="margin-bottom: 8px;">
                 <input type="text" id="newObjAddress" placeholder="Адрес (напр. ул. Староалексеевская 5А)" style="margin-bottom: 8px;">
                 <input type="hidden" id="editObjId">
-                <button onclick="saveObject()" id="saveObjBtn"> Добавить объект</button>
+                <button onclick="saveObject()" id="saveObjBtn">➕ Добавить объект</button>
             </div>
             <div id="objectsList"></div>
 
@@ -196,7 +200,7 @@
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newProblemName" placeholder="Напр. Застревание людей" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
-                <button onclick="saveProblem()" id="saveProbBtn"> Добавить проблему</button>
+                <button onclick="saveProblem()" id="saveProbBtn">➕ Добавить проблему</button>
             </div>
             <div id="problemsList"></div>
         </div>
@@ -212,14 +216,14 @@
                     <label>Client ID</label>
                     <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
                 </div>
-                <button onclick="saveClientId()" class="btn-secondary"> Сохранить Client ID</button>
+                <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить Client ID</button>
                 <button onclick="startOAuth()">🔐 Войти через Яндекс</button>
             </div>
             
             <div id="connected" class="hidden">
                 <div class="info-box">
                     ✅ <strong>Подключено к Яндекс.Диску</strong><br>
-                    Файл: <code>/Apps/АварийныеЗаявки/zayavki.json</code>
+                    Файл: <code>/elevator_data.json</code> (в корне диска)
                 </div>
                 <button onclick="syncNow()" class="btn-success"> Синхронизировать сейчас</button>
                 <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (Excel)</button>
@@ -239,8 +243,7 @@
         const YANDEX_TOKEN_KEY = 'yandexToken';
         const CLIENT_ID_KEY = 'yandexClientId';
         const SYNC_KEY = 'lastSyncTime';
-        const FILE_PATH = 'disk:/Apps/АварийныеЗаявки/zayavki.json';
-        const FOLDER_PATH = 'disk:/Apps/АварийныеЗаявки';
+        const FILE_PATH = 'disk:/elevator_data.json';
         
         // Загрузка данных из localStorage
         let requests = JSON.parse(localStorage.getItem('requests') || '[]');
@@ -337,7 +340,7 @@
                         </div>
                         <div class="db-item-actions">
                             <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button>
+                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">️</button>
                         </div>
                     </div>
                 `).join('');
@@ -410,8 +413,7 @@
                 if (yandexToken) setTimeout(syncNow, 500);
             }
         }
-
-                // --- Проблемы ---
+        // --- Проблемы ---
         function saveProblem() {
             const name = document.getElementById('newProblemName').value.trim();
             const editId = document.getElementById('editProblemId').value;
@@ -519,7 +521,7 @@
                             <span class="status-badge status-${r.status}">${statusText}</span>
                         </div>
                         <div class="request-info">
-                            ${r.objectName ? `<strong> ${r.objectName}</strong><br>` : ''}
+                            ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
                             <strong>📍 ${r.address}</strong><br>
                             Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
                             <strong>Проблема:</strong> ${r.issue || 'Не указана'}
@@ -552,9 +554,10 @@
                 renderRequests();
                 if (yandexToken) setTimeout(syncNow, 500);
             }
-            }
+        }
 
-                // === ЯНДЕКС.ДИСК API ===
+        
+        // === ЯНДЕКС.ДИСК API ===
         function updateUI() {
             const statusEl = document.getElementById('syncStatus');
             if (yandexToken) {
@@ -611,41 +614,15 @@
             return response;
         }
 
-        // === СИНХРОНИЗАЦИЯ (ИСПРАВЛЕНА ОШИБКА 409) ===
+        // === СИНХРОНИЗАЦИЯ ===
         async function syncNow() {
             if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
-            const btn = document.querySelector('#connected button');
+            const btn = document.querySelector('#connected .btn-success');
             const originalText = btn.textContent;
-            btn.textContent = '⏳ Синхронизация...';
+            btn.textContent = ' Синхронизация...';
             btn.disabled = true;
 
             try {
-                // 0. Создаём папку, если её нет. Ошибка 409 = папка уже есть, это нормально.
-                try {
-                    const createFolderUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FOLDER_PATH)}`;
-                    const folderResp = await fetch(createFolderUrl, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `OAuth ${yandexToken}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-                    if (folderResp.status === 409) {
-                        console.log('ℹ️ Папка уже существует — продолжаем');
-                    } else if (folderResp.status === 401) {
-                        yandexToken = '';
-                        localStorage.removeItem(YANDEX_TOKEN_KEY);
-                        updateUI();
-                        throw new Error('Токен истёк. Подключите Яндекс.Диск заново.');
-                    } else if (!folderResp.ok && folderResp.status !== 409) {
-                        console.warn('Не удалось создать папку, код:', folderResp.status);
-                    } else {
-                        console.log('✅ Папка создана');
-                    }
-                } catch (e) {
-                    console.warn('Ошибка при создании папки:', e.message);
-                }
-
                 // 1. Скачиваем существующий файл (если есть)
                 let cloudData = null;
                 try {
@@ -655,8 +632,9 @@
                     const fileResp = await fetch(data.href);
                     const text = await fileResp.text();
                     cloudData = JSON.parse(text);
+                    console.log('✅ Файл скачан с диска');
                 } catch (e) {
-                    console.log('Файл на диске не найден, создадим новый');
+                    console.log('️ Файл на диске не найден, создадим новый');
                 }
 
                 // 2. Объединяем данные
