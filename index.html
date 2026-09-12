@@ -28,7 +28,7 @@
             width: 100%; padding: 12px; border: 2px solid #ddd;
             border-radius: 8px; font-size: 16px; font-family: inherit;
         }
-        input[required], select[required], textarea[required] { border-color: #f44336; }
+        input[required], select[required], textarea[required] { border-left: 4px solid #f44336; }
         textarea { resize: vertical; min-height: 70px; }
         
         button {
@@ -106,7 +106,7 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу, лифту..." 
+            <input type="text" id="searchInput" placeholder=" Поиск по адресу, лифту..." 
                    oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
@@ -177,7 +177,7 @@
                     <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
                 </div>
                 
-                <button type="submit">💾 Сохранить заявку</button>
+                <button type="submit"> Сохранить заявку</button>
             </form>
         </div>
         
@@ -188,7 +188,7 @@
                 <input type="text" id="newObjName" placeholder="Название объекта (напр. ЖК Лайм)" style="margin-bottom: 8px;">
                 <input type="text" id="newObjAddress" placeholder="Адрес (напр. ул. Староалексеевская 5А)" style="margin-bottom: 8px;">
                 <input type="hidden" id="editObjId">
-                <button onclick="saveObject()" id="saveObjBtn">➕ Добавить объект</button>
+                <button onclick="saveObject()" id="saveObjBtn"> Добавить объект</button>
             </div>
             <div id="objectsList"></div>
 
@@ -225,7 +225,7 @@
                 <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (Excel)</button>
                 <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                    📊 <strong>Статистика:</strong><br>
+                     <strong>Статистика:</strong><br>
                     Всего заявок: <span id="statTotal">0</span><br>
                     Объектов в базе: <span id="statObj">0</span> | Видов проблем: <span id="statProb">0</span><br>
                     Последняя синхр.: <span id="lastSync">—</span>
@@ -423,7 +423,7 @@
                 const prob = problemsDB.find(p => p.id == editId);
                 prob.name = name;
                 document.getElementById('editProblemId').value = '';
-                document.getElementById('saveProbBtn').textContent = '➕ Добавить проблему';
+                document.getElementById('saveProbBtn').textContent = ' Добавить проблему';
             } else {
                 problemsDB.push({ id: Date.now(), name });
             }
@@ -521,7 +521,7 @@
                             <span class="status-badge status-${r.status}">${statusText}</span>
                         </div>
                         <div class="request-info">
-                            ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
+                            ${r.objectName ? `<strong> ${r.objectName}</strong><br>` : ''}
                             <strong>📍 ${r.address}</strong><br>
                             Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
                             <strong>Проблема:</strong> ${r.issue || 'Не указана'}
@@ -621,7 +621,20 @@
             btn.disabled = true;
 
             try {
-                // 1. Скачиваем
+                // 0. Создаём папку, если её нет
+                const folderPath = 'disk:/Apps/АварийныеЗаявки';
+                try {
+                    const folderUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(folderPath)}`;
+                    const folderCheck = await yandexFetch(folderUrl);
+                    if (!folderCheck.ok) throw new Error('Папка не найдена');
+                } catch (e) {
+                    // Папки нет — создаём
+                    const createFolderUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(folderPath)}`;
+                    await yandexFetch(createFolderUrl, { method: 'PUT' });
+                    console.log('✅ Папка создана');
+                }
+
+                // 1. Скачиваем существующий файл (если есть)
                 let cloudData = null;
                 try {
                     const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
@@ -634,19 +647,18 @@
                     console.log('Файл на диске не найден, создадим новый');
                 }
 
-                // 2. Объединяем (поддержка старого формата массива и нового объекта)
+                // 2. Объединяем данные
                 let cloudRequests = [], cloudObjects = [], cloudProblems = [];
                 if (cloudData) {
-                    if (Array.isArray(cloudData)) { // Старый формат
+                    if (Array.isArray(cloudData)) {
                         cloudRequests = cloudData;
-                    } else { // Новый формат
+                    } else {
                         cloudRequests = cloudData.requests || [];
                         cloudObjects = cloudData.objects || [];
                         cloudProblems = cloudData.problems || [];
                     }
                 }
-
-                // Мердж заявок
+                                // Мердж заявок
                 const localReqIds = new Set(requests.map(r => r.id));
                 for (const cr of cloudRequests) {
                     if (!localReqIds.has(cr.id)) requests.push(cr);
@@ -674,7 +686,7 @@
                 localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
                 localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
 
-                // 3. Загружаем обратно
+                // 3. Загружаем файл на диск
                 const uploadUrl = `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${encodeURIComponent(FILE_PATH)}&overwrite=true`;
                 const resp = await yandexFetch(uploadUrl);
                 const data = await resp.json();
@@ -686,7 +698,11 @@
                     lastSync: new Date().toISOString()
                 };
                 const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-                await fetch(data.href, { method: 'PUT', body: blob });
+                const uploadResp = await fetch(data.href, { method: 'PUT', body: blob });
+                
+                if (!uploadResp.ok) {
+                    throw new Error(`Ошибка загрузки файла: ${uploadResp.status}`);
+                }
 
                 localStorage.setItem(SYNC_KEY, new Date().toISOString());
                 updateUI();
