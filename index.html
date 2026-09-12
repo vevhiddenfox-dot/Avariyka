@@ -12,20 +12,25 @@
         }
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        h3 { font-size: 16px; margin: 20px 0 10px 0; color: #555; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+        
+        .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab {
-            flex: 1; padding: 12px; background: white;
+            flex: 1; min-width: 80px; padding: 10px 8px; background: white;
             border: 2px solid #ddd; border-radius: 8px;
-            text-align: center; cursor: pointer; font-weight: 600; font-size: 14px;
+            text-align: center; cursor: pointer; font-weight: 600; font-size: 13px;
         }
         .tab.active { background: #2196F3; color: white; border-color: #2196F3; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: #555; font-size: 14px; }
+        
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; font-size: 14px; }
         input, select, textarea {
             width: 100%; padding: 12px; border: 2px solid #ddd;
             border-radius: 8px; font-size: 16px; font-family: inherit;
         }
-        textarea { resize: vertical; min-height: 80px; }
+        input[required], select[required], textarea[required] { border-color: #f44336; }
+        textarea { resize: vertical; min-height: 70px; }
+        
         button {
             width: 100%; padding: 14px; background: #2196F3; color: white;
             border: none; border-radius: 8px; font-size: 16px;
@@ -33,47 +38,49 @@
         }
         button:active { background: #1976D2; }
         button:disabled { background: #BDBDBD; cursor: not-allowed; }
-        .btn-secondary { background: #757575; }
+        .btn-secondary { background: #757575; margin-top: 8px; }
         .btn-success { background: #4CAF50; }
         .btn-danger { background: #f44336; }
+        .btn-small { padding: 6px 10px; font-size: 13px; width: auto; margin: 0 4px 0 0; }
+        .btn-edit { background: #FF9800; }
+        
         .request-card {
-            background: white; padding: 16px; border-radius: 12px;
+            background: white; padding: 14px; border-radius: 12px;
             margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .request-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 12px;
-        }
+        .request-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .request-date { font-size: 12px; color: #999; }
-        .status-badge {
-            padding: 4px 12px; border-radius: 12px;
-            font-size: 12px; font-weight: 600;
-        }
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
         .status-new { background: #FFC107; color: #000; }
         .status-progress { background: #2196F3; color: white; }
         .status-done { background: #4CAF50; color: white; }
-        .request-info { font-size: 14px; line-height: 1.6; }
+        .request-info { font-size: 14px; line-height: 1.5; }
         .request-info strong { color: #333; }
         .request-actions { display: flex; gap: 8px; margin-top: 12px; }
         .request-actions button { flex: 1; padding: 8px; font-size: 14px; margin: 0; }
+        
         .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
         .filter-bar select { flex: 1; }
         .empty-state { text-align: center; padding: 40px 20px; color: #999; }
         .hidden { display: none; }
-        .sync-status {
-            padding: 12px; border-radius: 8px; margin-bottom: 16px;
-            font-size: 13px; text-align: center;
-        }
+        
+        .sync-status { padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; text-align: center; }
         .sync-ok { background: #E8F5E9; color: #2E7D32; }
         .sync-off { background: #FFF3E0; color: #E65100; }
+        
+        .db-item {
+            background: white; padding: 12px; border-radius: 8px;
+            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid #2196F3;
+        }
+        .db-item-info { flex: 1; }
+        .db-item-title { font-weight: 600; font-size: 15px; }
+        .db-item-sub { font-size: 13px; color: #666; margin-top: 4px; }
+        .db-item-actions { display: flex; gap: 4px; }
+        
         .info-box {
             background: #E3F2FD; padding: 12px; border-radius: 8px;
             margin-bottom: 16px; font-size: 13px; color: #1565C0; line-height: 1.5;
-        }
-        .debug-box {
-            background: #FFF9C4; padding: 12px; border-radius: 8px;
-            margin-top: 16px; font-size: 12px; font-family: monospace;
-            max-height: 200px; overflow-y: auto;
         }
     </style>
 </head>
@@ -85,53 +92,11 @@
         <div class="tabs">
             <div class="tab active" data-tab="list">Список</div>
             <div class="tab" data-tab="add">+ Новая</div>
+            <div class="tab" data-tab="db">База</div>
             <div class="tab" data-tab="sync">☁️ Облако</div>
         </div>
         
-        <!-- Форма добавления -->
-        <div id="addTab" class="hidden">
-            <form id="requestForm">
-                <div class="form-group">
-                    <label>Дата и время *</label>
-                    <input type="datetime-local" id="dateTime" required>
-                </div>
-                <div class="form-group">
-                    <label>Адрес объекта *</label>
-                    <input type="text" id="address" placeholder="ул. Ленина, д. 10" required>
-                </div>
-                <div class="form-group">
-                    <label>Подъезд *</label>
-                    <input type="text" id="entrance" placeholder="1" required>
-                </div>
-                <div class="form-group">
-                    <label>Номер лифта *</label>
-                    <input type="text" id="elevator" placeholder="Л-1" required>
-                </div>
-                <div class="form-group">
-                    <label>Этаж *</label>
-                    <input type="text" id="floor" placeholder="5" required>
-                </div>
-                <div class="form-group">
-                    <label>Характер неисправности *</label>
-                    <textarea id="issue" placeholder="Застревание людей, не закрываются двери..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Статус *</label>
-                    <select id="status" required>
-                        <option value="new">Новая</option>
-                        <option value="progress">В работе</option>
-                        <option value="done">Выполнена</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Комментарий</label>
-                    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
-                </div>
-                <button type="submit">Сохранить заявку</button>
-            </form>
-        </div>
-        
-        <!-- Список заявок -->
+        <!-- Вкладка: Список -->
         <div id="listTab">
             <div class="filter-bar">
                 <select id="filterStatus" onchange="renderRequests()">
@@ -141,29 +106,130 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу или лифту..." 
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу, лифту..." 
                    oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
         
-        <!-- Синхронизация -->
+        <!-- Вкладка: Новая заявка -->
+        <div id="addTab" class="hidden">
+            <form id="requestForm">
+                <div class="form-group">
+                    <label>Дата и время *</label>
+                    <input type="datetime-local" id="dateTime" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Объект *</label>
+                    <select id="objectSelect" onchange="autoFillAddress()" required>
+                        <option value="">-- Выберите объект из базы --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Адрес *</label>
+                    <input type="text" id="address" placeholder="Заполнится автоматически или введите вручную" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Подъезд *</label>
+                    <input type="text" id="entrance" placeholder="Например: 1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Секция</label>
+                    <input type="text" id="section" placeholder="Необязательно">
+                </div>
+                
+                <div class="form-group">
+                    <label>Лифт (название/номер)</label>
+                    <input type="text" id="elevator" placeholder="Например: Л-1 или Грузовой">
+                </div>
+                
+                <div class="form-group">
+                    <label>Этаж</label>
+                    <input type="text" id="floor" placeholder="Необязательно">
+                </div>
+                
+                <div class="form-group">
+                    <label>Вид проблемы</label>
+                    <select id="problemSelect" onchange="autoFillIssue()">
+                        <option value="">-- Выберите или опишите ниже --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Характеристики / Описание</label>
+                    <textarea id="issue" placeholder="Подробности неисправности..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Статус *</label>
+                    <select id="status" required>
+                        <option value="new">Новая</option>
+                        <option value="progress">В работе</option>
+                        <option value="done">Выполнена</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
+                </div>
+                
+                <button type="submit">💾 Сохранить заявку</button>
+            </form>
+        </div>
+        
+        <!-- Вкладка: База -->
+        <div id="dbTab" class="hidden">
+            <h3>🏢 Объекты и адреса</h3>
+            <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
+                <input type="text" id="newObjName" placeholder="Название объекта (напр. ЖК Лайм)" style="margin-bottom: 8px;">
+                <input type="text" id="newObjAddress" placeholder="Адрес (напр. ул. Староалексеевская 5А)" style="margin-bottom: 8px;">
+                <input type="hidden" id="editObjId">
+                <button onclick="saveObject()" id="saveObjBtn">➕ Добавить объект</button>
+            </div>
+            <div id="objectsList"></div>
+
+            <h3>⚠️ Виды проблем</h3>
+            <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
+                <input type="text" id="newProblemName" placeholder="Напр. Застревание людей" style="margin-bottom: 8px;">
+                <input type="hidden" id="editProblemId">
+                <button onclick="saveProblem()" id="saveProbBtn">➕ Добавить проблему</button>
+            </div>
+            <div id="problemsList"></div>
+        </div>
+        
+        <!-- Вкладка: Облако -->
         <div id="syncTab" class="hidden">
-            <div class="info-box">
-                <strong>🔑 Ваш Client ID:</strong><br>
-                <code id="displayClientId">Не задан</code>
+            <div id="notConnected">
+                <div class="info-box">
+                    <strong>🔑 Подключение Яндекс.Диска:</strong><br>
+                    Введите ваш Client ID и нажмите "Войти через Яндекс".
+                </div>
+                <div class="form-group">
+                    <label>Client ID</label>
+                    <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
+                </div>
+                <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить Client ID</button>
+                <button onclick="startOAuth()">🔐 Войти через Яндекс</button>
             </div>
             
-            <div class="form-group">
-                <label>Client ID Яндекс</label>
-                <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
-            </div>
-            
-            <button id="saveClientIdBtn">💾 Сохранить Client ID</button>
-            <button id="startOAuthBtn">🔐 Войти через Яндекс</button>
-            <button id="disconnectBtn" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
-            
-            <div class="debug-box" id="debugLog">
-                <strong>Журнал:</strong><br>
+            <div id="connected" class="hidden">
+                <div class="info-box">
+                    ✅ <strong>Подключено к Яндекс.Диску</strong><br>
+                    Файл: <code>/Apps/АварийныеЗаявки/zayavki.json</code>
+                </div>
+                <button onclick="syncNow()" class="btn-success">🔄 Синхронизировать сейчас</button>
+                <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (Excel)</button>
+                <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
+                <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
+                    📊 <strong>Статистика:</strong><br>
+                    Всего заявок: <span id="statTotal">0</span><br>
+                    Объектов в базе: <span id="statObj">0</span> | Видов проблем: <span id="statProb">0</span><br>
+                    Последняя синхр.: <span id="lastSync">—</span>
+                </div>
             </div>
         </div>
     </div>
@@ -171,148 +237,234 @@
     <script>
         // === КОНФИГУРАЦИЯ ===
         const YANDEX_TOKEN_KEY = 'yandexToken';
-        const DATA_KEY = 'elevatorRequests';
         const CLIENT_ID_KEY = 'yandexClientId';
+        const SYNC_KEY = 'lastSyncTime';
         const FILE_PATH = 'disk:/Apps/АварийныеЗаявки/zayavki.json';
         
-        let requests = JSON.parse(localStorage.getItem(DATA_KEY) || '[]');
+        // Загрузка данных из localStorage
+        let requests = JSON.parse(localStorage.getItem('requests') || '[]');
+        let objectsDB = JSON.parse(localStorage.getItem('objectsDB') || '[]');
+        let problemsDB = JSON.parse(localStorage.getItem('problemsDB') || '[]');
         let yandexToken = localStorage.getItem(YANDEX_TOKEN_KEY) || '';
         let YANDEX_CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
-        
-        // === ОТЛАДКА ===
-        function log(message) {
-            const debugEl = document.getElementById('debugLog');
-            const time = new Date().toLocaleTimeString('ru-RU');
-            debugEl.innerHTML += `[${time}] ${message}<br>`;
-            debugEl.scrollTop = debugEl.scrollHeight;
-            console.log(message);
-        }
-        
-        log('Приложение запущено');
-        log(`Client ID: ${YANDEX_CLIENT_ID || 'не задан'}`);
-        log(`Токен: ${yandexToken ? 'есть' : 'нет'}`);
-        
-        // === ИНИЦИАЛИЗАЦИЯ ===
+
+        // Инициализация даты
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('dateTime').value = now.toISOString().slice(0, 16);
-        
-        if (YANDEX_CLIENT_ID) {
-            document.getElementById('clientIdInput').value = YANDEX_CLIENT_ID;
-            document.getElementById('displayClientId').textContent = YANDEX_CLIENT_ID;
+
+        // Если база пустая, добавим примеры
+        if (objectsDB.length === 0) {
+            objectsDB = [{ id: Date.now(), name: 'ЖК Лайм', address: 'ул. Староалексеевская 5А' }];
+            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
         }
-        
+        if (problemsDB.length === 0) {
+            problemsDB = [
+                { id: Date.now()+1, name: 'Застревание людей' },
+                { id: Date.now()+2, name: 'Лифт не едет / сломался' },
+                { id: Date.now()+3, name: 'Не закрываются двери' },
+                { id: Date.now()+4, name: 'Нужен перезапуск' }
+            ];
+            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
+        }
+
         // === ОБРАБОТКА REDIRECT ОТ ЯНДЕКСА ===
         function handleOAuthRedirect() {
             const hash = window.location.hash;
             if (hash && hash.includes('access_token')) {
-                log('Получен redirect от Яндекса');
                 const params = new URLSearchParams(hash.substring(1));
                 const token = params.get('access_token');
                 if (token) {
                     yandexToken = token;
                     localStorage.setItem(YANDEX_TOKEN_KEY, token);
                     window.history.replaceState({}, '', window.location.pathname);
-                    log('✅ Токен получен и сохранён');
                     updateUI();
                     alert('✅ Яндекс.Диск подключён!');
+                    syncNow();
                 }
             }
         }
         handleOAuthRedirect();
-        
+
         // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const tabName = this.getAttribute('data-tab');
-                log(`Переключение на вкладку: ${tabName}`);
-                
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 
-                document.getElementById('addTab').classList.add('hidden');
-                document.getElementById('listTab').classList.add('hidden');
-                document.getElementById('syncTab').classList.add('hidden');
+                ['listTab', 'addTab', 'dbTab', 'syncTab'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+                document.getElementById(tabName + 'Tab').classList.remove('hidden');
                 
-                if (tabName === 'list') {
-                    document.getElementById('listTab').classList.remove('hidden');
-                    renderRequests();
-                } else if (tabName === 'add') {
-                    document.getElementById('addTab').classList.remove('hidden');
-                } else if (tabName === 'sync') {
-                    document.getElementById('syncTab').classList.remove('hidden');
-                    updateUI();
-                }
+                if (tabName === 'list') renderRequests();
+                if (tabName === 'add') updateFormDropdowns();
+                if (tabName === 'db') renderDB();
+                if (tabName === 'sync') updateStats();
             });
         });
-        
-        // === UI ===
-        function updateUI() {
-            log('Обновление UI');
-            const statusEl = document.getElementById('syncStatus');
-            
-            if (yandexToken) {
-                statusEl.className = 'sync-status sync-ok';
-                statusEl.textContent = '☁️ Подключено к Яндекс.Диску';
-                log('Статус: подключено');
+
+        // === УПРАВЛЕНИЕ БАЗОЙ ДАННЫХ ===
+        function renderDB() {
+            // Объекты
+            const objList = document.getElementById('objectsList');
+            if (objectsDB.length === 0) {
+                objList.innerHTML = '<div class="empty-state">Нет объектов</div>';
             } else {
-                statusEl.className = 'sync-status sync-off';
-                statusEl.textContent = '☁️ Облако не подключено';
-                log('Статус: не подключено');
+                objList.innerHTML = objectsDB.map(obj => `
+                    <div class="db-item">
+                        <div class="db-item-info">
+                            <div class="db-item-title">${obj.name}</div>
+                            <div class="db-item-sub">${obj.address}</div>
+                        </div>
+                        <div class="db-item-actions">
+                            <button class="btn-small btn-edit" onclick="editObject(${obj.id})">✏️</button>
+                            <button class="btn-small btn-danger" onclick="deleteObject(${obj.id})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Проблемы
+            const probList = document.getElementById('problemsList');
+            if (problemsDB.length === 0) {
+                probList.innerHTML = '<div class="empty-state">Нет видов проблем</div>';
+            } else {
+                probList.innerHTML = problemsDB.map(prob => `
+                    <div class="db-item" style="border-left-color: #FF9800;">
+                        <div class="db-item-info">
+                            <div class="db-item-title">${prob.name}</div>
+                        </div>
+                        <div class="db-item-actions">
+                            <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
+                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
-        
-        // === КНОПКИ ===
-        document.getElementById('saveClientIdBtn').addEventListener('click', function() {
-            log('Нажата кнопка сохранения Client ID');
-            const clientId = document.getElementById('clientIdInput').value.trim();
-            if (!clientId) {
-                alert('❌ Введите Client ID');
-                log('❌ Client ID пустой');
-                return;
+
+        function updateFormDropdowns() {
+            const objSelect = document.getElementById('objectSelect');
+            objSelect.innerHTML = '<option value="">-- Выберите объект из базы --</option>' + 
+                objectsDB.map(obj => `<option value="${obj.id}" data-address="${obj.address}">${obj.name}</option>`).join('');
+            
+            const probSelect = document.getElementById('problemSelect');
+            probSelect.innerHTML = '<option value="">-- Выберите или опишите ниже --</option>' + 
+                problemsDB.map(prob => `<option value="${prob.name}">${prob.name}</option>`).join('');
+        }
+
+        function autoFillAddress() {
+            const select = document.getElementById('objectSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            if (selectedOption && selectedOption.getAttribute('data-address')) {
+                document.getElementById('address').value = selectedOption.getAttribute('data-address');
             }
-            YANDEX_CLIENT_ID = clientId;
-            localStorage.setItem(CLIENT_ID_KEY, clientId);
-            document.getElementById('displayClientId').textContent = clientId;
-            alert('✅ Client ID сохранён');
-            log(`✅ Client ID сохранён: ${clientId}`);
-        });
-        
-        document.getElementById('startOAuthBtn').addEventListener('click', function() {
-            log('Нажата кнопка входа через Яндекс');
-            if (!YANDEX_CLIENT_ID) {
-                alert('❌ Сначала введите и сохраните Client ID');
-                log('❌ Client ID не задан');
-                return;
+        }
+
+        function autoFillIssue() {
+            const select = document.getElementById('problemSelect');
+            if (select.value) {
+                document.getElementById('issue').value = select.value;
             }
-            const redirectUri = window.location.origin + window.location.pathname;
-            log(`Redirect URI: ${redirectUri}`);
-            const url = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-            log(`Переход на: ${url}`);
-            window.location.href = url;
-        });
-        
-        document.getElementById('disconnectBtn').addEventListener('click', function() {
-            log('Нажата кнопка отключения');
-            if (confirm('Отключить Яндекс.Диск? Данные в приложении останутся.')) {
-                localStorage.removeItem(YANDEX_TOKEN_KEY);
-                yandexToken = '';
-                updateUI();
-                alert('✅ Яндекс.Диск отключён');
-                log('✅ Отключено');
+        }
+
+        // --- Объекты ---
+        function saveObject() {
+            const name = document.getElementById('newObjName').value.trim();
+            const address = document.getElementById('newObjAddress').value.trim();
+            const editId = document.getElementById('editObjId').value;
+            
+            if (!name || !address) { alert('Заполните название и адрес'); return; }
+
+            if (editId) {
+                const obj = objectsDB.find(o => o.id == editId);
+                obj.name = name; obj.address = address;
+                document.getElementById('editObjId').value = '';
+                document.getElementById('saveObjBtn').textContent = '➕ Добавить объект';
+            } else {
+                objectsDB.push({ id: Date.now(), name, address });
             }
-        });
-        
+            
+            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
+            document.getElementById('newObjName').value = '';
+            document.getElementById('newObjAddress').value = '';
+            renderDB();
+            if (yandexToken) setTimeout(syncNow, 500);
+        }
+
+        function editObject(id) {
+            const obj = objectsDB.find(o => o.id === id);
+            document.getElementById('newObjName').value = obj.name;
+            document.getElementById('newObjAddress').value = obj.address;
+            document.getElementById('editObjId').value = id;
+            document.getElementById('saveObjBtn').textContent = '💾 Сохранить изменения';
+            window.scrollTo(0, 0);
+        }
+
+        function deleteObject(id) {
+            if (confirm('Удалить этот объект?')) {
+                objectsDB = objectsDB.filter(o => o.id !== id);
+                localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
+                renderDB();
+                if (yandexToken) setTimeout(syncNow, 500);
+            }
+        }
+
+        // --- Проблемы ---
+        function saveProblem() {
+            const name = document.getElementById('newProblemName').value.trim();
+            const editId = document.getElementById('editProblemId').value;
+            
+            if (!name) { alert('Введите название проблемы'); return; }
+
+            if (editId) {
+                const prob = problemsDB.find(p => p.id == editId);
+                prob.name = name;
+                document.getElementById('editProblemId').value = '';
+                document.getElementById('saveProbBtn').textContent = '➕ Добавить проблему';
+            } else {
+                problemsDB.push({ id: Date.now(), name });
+            }
+            
+            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
+            document.getElementById('newProblemName').value = '';
+            renderDB();
+            if (yandexToken) setTimeout(syncNow, 500);
+        }
+
+        function editProblem(id) {
+            const prob = problemsDB.find(p => p.id === id);
+            document.getElementById('newProblemName').value = prob.name;
+            document.getElementById('editProblemId').value = id;
+            document.getElementById('saveProbBtn').textContent = '💾 Сохранить изменения';
+            window.scrollTo(0, document.getElementById('problemsList').offsetTop);
+        }
+
+        function deleteProblem(id) {
+            if (confirm('Удалить этот вид проблемы?')) {
+                problemsDB = problemsDB.filter(p => p.id !== id);
+                localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
+                renderDB();
+                if (yandexToken) setTimeout(syncNow, 500);
+            }
+        }
+
         // === РАБОТА С ЗАЯВКАМИ ===
         document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            log('Форма отправлена');
             
+            const objSelect = document.getElementById('objectSelect');
+            const objName = objSelect.options[objSelect.selectedIndex].text;
+
             const request = {
                 id: Date.now(),
                 dateTime: document.getElementById('dateTime').value,
+                objectName: objName !== '-- Выберите объект из базы --' ? objName : '',
                 address: document.getElementById('address').value,
                 entrance: document.getElementById('entrance').value,
+                section: document.getElementById('section').value,
                 elevator: document.getElementById('elevator').value,
                 floor: document.getElementById('floor').value,
                 issue: document.getElementById('issue').value,
@@ -323,8 +475,7 @@
             };
             
             requests.unshift(request);
-            localStorage.setItem(DATA_KEY, JSON.stringify(requests));
-            log(`✅ Заявка добавлена: ${request.address}`);
+            localStorage.setItem('requests', JSON.stringify(requests));
             
             this.reset();
             const now2 = new Date();
@@ -339,23 +490,27 @@
             renderRequests();
             
             alert('✅ Заявка сохранена');
+            if (yandexToken) setTimeout(syncNow, 1000);
         });
-        
+
         function renderRequests() {
             const filter = document.getElementById('filterStatus').value;
             const search = document.getElementById('searchInput').value.toLowerCase();
             let filtered = requests.filter(r => {
                 const matchStatus = filter === 'all' || r.status === filter;
                 const matchSearch = !search || 
-                    r.address.toLowerCase().includes(search) ||
-                    r.elevator.toLowerCase().includes(search);
+                    (r.address && r.address.toLowerCase().includes(search)) ||
+                    (r.elevator && r.elevator.toLowerCase().includes(search)) ||
+                    (r.objectName && r.objectName.toLowerCase().includes(search));
                 return matchStatus && matchSearch;
             });
+            
             const container = document.getElementById('requestsList');
             if (filtered.length === 0) {
                 container.innerHTML = '<div class="empty-state">Нет заявок</div>';
                 return;
             }
+            
             container.innerHTML = filtered.map(r => {
                 const date = new Date(r.dateTime).toLocaleString('ru-RU');
                 const statusText = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}[r.status];
@@ -366,9 +521,10 @@
                             <span class="status-badge status-${r.status}">${statusText}</span>
                         </div>
                         <div class="request-info">
+                            ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
                             <strong>📍 ${r.address}</strong><br>
-                            Подъезд: ${r.entrance} | Лифт: ${r.elevator} | Этаж: ${r.floor}<br>
-                            <strong>Неисправность:</strong> ${r.issue}
+                            Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
+                            <strong>Проблема:</strong> ${r.issue || 'Не указана'}
                             ${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}
                         </div>
                         <div class="request-actions">
@@ -379,31 +535,202 @@
                 `;
             }).join('');
         }
-        
+
         function changeStatus(id) {
             const request = requests.find(r => r.id === id);
             const statuses = ['new', 'progress', 'done'];
             const currentIndex = statuses.indexOf(request.status);
             request.status = statuses[(currentIndex + 1) % statuses.length];
             request.updatedAt = new Date().toISOString();
-            localStorage.setItem(DATA_KEY, JSON.stringify(requests));
-            log(`Статус изменён: ${request.address}`);
+            localStorage.setItem('requests', JSON.stringify(requests));
             renderRequests();
+            if (yandexToken) setTimeout(syncNow, 500);
         }
-        
+
         function deleteRequest(id) {
             if (confirm('Удалить заявку?')) {
                 requests = requests.filter(r => r.id !== id);
-                localStorage.setItem(DATA_KEY, JSON.stringify(requests));
-                log('Заявка удалена');
+                localStorage.setItem('requests', JSON.stringify(requests));
                 renderRequests();
+                if (yandexToken) setTimeout(syncNow, 500);
             }
         }
-        
+
+        // === ЯНДЕКС.ДИСК API И СИНХРОНИЗАЦИЯ ===
+        function updateUI() {
+            const statusEl = document.getElementById('syncStatus');
+            if (yandexToken) {
+                statusEl.className = 'sync-status sync-ok';
+                statusEl.textContent = '☁️ Подключено к Яндекс.Диску';
+                document.getElementById('notConnected').classList.add('hidden');
+                document.getElementById('connected').classList.remove('hidden');
+                document.getElementById('clientIdInput').value = YANDEX_CLIENT_ID;
+            } else {
+                statusEl.className = 'sync-status sync-off';
+                statusEl.textContent = '☁️ Облако не подключено';
+                document.getElementById('notConnected').classList.remove('hidden');
+                document.getElementById('connected').classList.add('hidden');
+            }
+            updateStats();
+        }
+
+        function saveClientId() {
+            YANDEX_CLIENT_ID = document.getElementById('clientIdInput').value.trim();
+            if (!YANDEX_CLIENT_ID) { alert('❌ Введите Client ID'); return; }
+            localStorage.setItem(CLIENT_ID_KEY, YANDEX_CLIENT_ID);
+            alert('✅ Client ID сохранён');
+        }
+
+        function startOAuth() {
+            if (!YANDEX_CLIENT_ID) { alert('❌ Сначала введите и сохраните Client ID'); return; }
+            const redirectUri = window.location.origin + window.location.pathname;
+            const url = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+            window.location.href = url;
+        }
+
+        function disconnect() {
+            if (confirm('Отключить Яндекс.Диск? Данные в приложении останутся.')) {
+                localStorage.removeItem(YANDEX_TOKEN_KEY);
+                yandexToken = '';
+                updateUI();
+            }
+        }
+
+        async function yandexFetch(url, options = {}) {
+            options.headers = options.headers || {};
+            options.headers['Authorization'] = `OAuth ${yandexToken}`;
+            options.headers['Accept'] = 'application/json';
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    yandexToken = '';
+                    localStorage.removeItem(YANDEX_TOKEN_KEY);
+                    updateUI();
+                    throw new Error('Токен истёк. Подключите Яндекс.Диск заново.');
+                }
+                throw new Error(`Ошибка API: ${response.status}`);
+            }
+            return response;
+        }
+
+        async function syncNow() {
+            if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
+            const btn = document.querySelector('#connected button');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Синхронизация...';
+            btn.disabled = true;
+
+            try {
+                // 1. Скачиваем
+                let cloudData = null;
+                try {
+                    const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
+                    const resp = await yandexFetch(url);
+                    const data = await resp.json();
+                    const fileResp = await fetch(data.href);
+                    const text = await fileResp.text();
+                    cloudData = JSON.parse(text);
+                } catch (e) {
+                    console.log('Файл на диске не найден, создадим новый');
+                }
+
+                // 2. Объединяем (поддержка старого формата массива и нового объекта)
+                let cloudRequests = [], cloudObjects = [], cloudProblems = [];
+                if (cloudData) {
+                    if (Array.isArray(cloudData)) { // Старый формат
+                        cloudRequests = cloudData;
+                    } else { // Новый формат
+                        cloudRequests = cloudData.requests || [];
+                        cloudObjects = cloudData.objects || [];
+                        cloudProblems = cloudData.problems || [];
+                    }
+                }
+
+                // Мердж заявок
+                const localReqIds = new Set(requests.map(r => r.id));
+                for (const cr of cloudRequests) {
+                    if (!localReqIds.has(cr.id)) requests.push(cr);
+                    else {
+                        const lr = requests.find(r => r.id === cr.id);
+                        if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) Object.assign(lr, cr);
+                    }
+                }
+                requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+                // Мердж объектов
+                const localObjIds = new Set(objectsDB.map(o => o.id));
+                for (const co of cloudObjects) {
+                    if (!localObjIds.has(co.id)) objectsDB.push(co);
+                }
+
+                // Мердж проблем
+                const localProbIds = new Set(problemsDB.map(p => p.id));
+                for (const cp of cloudProblems) {
+                    if (!localProbIds.has(cp.id)) problemsDB.push(cp);
+                }
+
+                // Сохраняем локально
+                localStorage.setItem('requests', JSON.stringify(requests));
+                localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
+                localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
+
+                // 3. Загружаем обратно
+                const uploadUrl = `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${encodeURIComponent(FILE_PATH)}&overwrite=true`;
+                const resp = await yandexFetch(uploadUrl);
+                const data = await resp.json();
+                
+                const payload = {
+                    requests: requests,
+                    objects: objectsDB,
+                    problems: problemsDB,
+                    lastSync: new Date().toISOString()
+                };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                await fetch(data.href, { method: 'PUT', body: blob });
+
+                localStorage.setItem(SYNC_KEY, new Date().toISOString());
+                updateUI();
+                renderRequests();
+                alert('✅ Синхронизация завершена!');
+            } catch (e) {
+                console.error(e);
+                alert('❌ Ошибка синхронизации: ' + e.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').textContent = requests.length;
+            document.getElementById('statObj').textContent = objectsDB.length;
+            document.getElementById('statProb').textContent = problemsDB.length;
+            const lastSync = localStorage.getItem(SYNC_KEY);
+            document.getElementById('lastSync').textContent = lastSync ? new Date(lastSync).toLocaleString('ru-RU') : '—';
+        }
+
+        function exportToCSV() {
+            const headers = ['Дата', 'Объект', 'Адрес', 'Подъезд', 'Секция', 'Лифт', 'Этаж', 'Проблема', 'Статус', 'Комментарий'];
+            const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'};
+            const rows = requests.map(r => [
+                new Date(r.dateTime).toLocaleString('ru-RU'),
+                r.objectName || '', r.address, r.entrance, r.section || '',
+                r.elevator || '', r.floor || '', r.issue || '',
+                statusMap[r.status], r.comment || ''
+            ]);
+            const csv = [headers, ...rows]
+                .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+                .join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
         // Инициализация
         updateUI();
         renderRequests();
-        log('✅ Приложение готово к работе');
     </script>
 </body>
 </html>
