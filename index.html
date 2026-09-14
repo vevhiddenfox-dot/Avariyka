@@ -96,7 +96,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🛗 Аварийные заявки</h1>
+        <h1> Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
         
         <div class="tabs">
@@ -187,13 +187,13 @@
                     <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
                 </div>
                 
-                <button type="submit"> Сохранить заявку</button>
+                <button type="submit">💾 Сохранить заявку</button>
             </form>
         </div>
         
         <!-- Вкладка: База -->
         <div id="dbTab" class="hidden">
-            <h3> Объекты и адреса</h3>
+            <h3>🏢 Объекты и адреса</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newObjName" placeholder="Название объекта (напр. ЖК Лайм)" style="margin-bottom: 8px;">
                 <input type="text" id="newObjAddress" placeholder="Адрес (напр. ул. Староалексеевская 5А)" style="margin-bottom: 8px;">
@@ -202,7 +202,7 @@
             </div>
             <div id="objectsList"></div>
 
-            <h3>️ Виды проблем</h3>
+            <h3>⚠️ Виды проблем</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newProblemName" placeholder="Напр. Застревание людей" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
@@ -244,7 +244,7 @@
                 <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
                 
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                     <strong>Статистика:</strong><br>
+                    📊 <strong>Статистика:</strong><br>
                     Всего заявок: <span id="statTotal">0</span><br>
                     Объектов в базе: <span id="statObj">0</span> | Видов проблем: <span id="statProb">0</span><br>
                     Последняя загрузка: <span id="lastUpload">—</span><br>
@@ -410,6 +410,7 @@
             document.getElementById('newObjAddress').value = '';
             renderDB();
         }
+
         function editObject(id) {
             const obj = objectsDB.find(o => o.id === id);
             document.getElementById('newObjName').value = obj.name;
@@ -565,7 +566,7 @@
             }
         }
 
-                // === ЯНДЕКС.ДИСК API ===
+        // === ЯНДЕКС.ДИСК API ===
         function updateUI() {
             const statusEl = document.getElementById('syncStatus');
             if (yandexToken) {
@@ -624,7 +625,7 @@
 
         // === ЗАГРУЗКА НА ЯНДЕКС.ДИСК ===
         async function uploadToYandex() {
-            if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
+            if (!yandexToken) { alert(' Сначала подключите Яндекс.Диск'); return; }
             
             const btn = document.getElementById('btnUpload');
             const originalText = btn.textContent;
@@ -654,7 +655,7 @@
                 alert('✅ Данные загружены на Яндекс.Диск!');
             } catch (e) {
                 console.error(e);
-                alert('❌ Ошибка загрузки: ' + e.message);
+                alert(' Ошибка загрузки: ' + e.message);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
@@ -671,14 +672,39 @@
             btn.disabled = true;
 
             try {
-                // Скачиваем файл
+                // Сначала проверяем, существует ли файл
+                const checkUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`;
+                const checkResp = await yandexFetch(checkUrl);
+                
+                if (!checkResp.ok) {
+                    throw new Error('Файл не найден на Яндекс.Диске. Сначала загрузите данные с первого устройства.');
+                }
+                
+                // Получаем ссылку для скачивания
                 const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
                 const resp = await yandexFetch(url);
                 const data = await resp.json();
-                const fileResp = await fetch(data.href);
-                const text = await fileResp.text();
-                const cloudData = JSON.parse(text);
                 
+                console.log('Ссылка для скачивания:', data.href);
+                
+                // Скачиваем файл с помощью XMLHttpRequest для обхода CORS
+                const fileContent = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', data.href, true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            resolve(xhr.responseText);
+                        } else {
+                            reject(new Error(`HTTP ${xhr.status}`));
+                        }
+                    };
+                    xhr.onerror = function() {
+                        reject(new Error('Network error'));
+                    };
+                    xhr.send();
+                });
+                
+                const cloudData = JSON.parse(fileContent);
                 console.log('✅ Файл скачан с диска');
 
                 let cloudRequests = [], cloudObjects = [], cloudProblems = [];
@@ -746,10 +772,10 @@
                 alert('✅ Данные скачаны с Яндекс.Диска!\n' + stats);
             } catch (e) {
                 console.error(e);
-                if (e.message.includes('404') || e.message.includes('NoSuchResource')) {
-                    alert('️ На Яндекс.Диске ещё нет данных. Сначала загрузите данные с этого устройства.');
+                if (e.message.includes('не найден') || e.message.includes('404')) {
+                    alert('⚠️ На Яндекс.Диске ещё нет данных.\n\nСначала загрузите данные с первого устройства:\n1. Откройте программу на первом устройстве\n2. Вкладка "Облако"\n3. Нажмите "⬆️ Загрузить на Яндекс.Диск"');
                 } else {
-                    alert('❌ Ошибка скачивания: ' + e.message);
+                    alert('❌ Ошибка скачивания: ' + e.message + '\n\nПроверьте:\n- Подключение к интернету\n- Права доступа приложения на Яндекс.Диске');
                 }
             } finally {
                 btn.textContent = originalText;
