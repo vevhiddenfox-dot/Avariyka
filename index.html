@@ -96,17 +96,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>🛗 Аварийные заявки</h1>
+        <h1> Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
         
         <div class="tabs">
             <div class="tab active" data-tab="list">Список</div>
             <div class="tab" data-tab="add">+ Новая</div>
             <div class="tab" data-tab="db">База</div>
-            <div class="tab" data-tab="sync">️ Облако</div>
+            <div class="tab" data-tab="sync">☁️ Облако</div>
         </div>
         
-        <!-- Вкладка: Список -->
         <div id="listTab">
             <div class="filter-bar">
                 <select id="filterStatus" onchange="renderRequests()">
@@ -121,58 +120,48 @@
             <div id="requestsList"></div>
         </div>
         
-        <!-- Вкладка: Новая заявка -->
         <div id="addTab" class="hidden">
             <form id="requestForm">
                 <div class="form-group">
                     <label>Дата и время *</label>
                     <input type="datetime-local" id="dateTime" required>
                 </div>
-                
                 <div class="form-group">
                     <label>Объект *</label>
                     <select id="objectSelect" onchange="autoFillAddress()" required>
                         <option value="">-- Выберите объект из базы --</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label>Адрес *</label>
-                    <input type="text" id="address" placeholder="Заполнится автоматически или введите вручную" required>
+                    <input type="text" id="address" placeholder="Заполнится автоматически" required>
                 </div>
-                
                 <div class="form-group">
                     <label>Подъезд *</label>
                     <input type="text" id="entrance" placeholder="Например: 1" required>
                 </div>
-                
                 <div class="form-group">
                     <label>Секция</label>
                     <input type="text" id="section" placeholder="Необязательно">
                 </div>
-                
                 <div class="form-group">
                     <label>Лифт (название/номер)</label>
-                    <input type="text" id="elevator" placeholder="Например: Л-1 или Грузовой">
+                    <input type="text" id="elevator" placeholder="Например: Л-1">
                 </div>
-                
                 <div class="form-group">
                     <label>Этаж</label>
                     <input type="text" id="floor" placeholder="Необязательно">
                 </div>
-                
                 <div class="form-group">
                     <label>Вид проблемы</label>
                     <select id="problemSelect" onchange="autoFillIssue()">
                         <option value="">-- Выберите или опишите ниже --</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label>Характеристики / Описание</label>
                     <textarea id="issue" placeholder="Подробности неисправности..."></textarea>
                 </div>
-                
                 <div class="form-group">
                     <label>Статус *</label>
                     <select id="status" required>
@@ -181,22 +170,19 @@
                         <option value="done">Выполнена</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label>Комментарий</label>
                     <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
                 </div>
-                
                 <button type="submit">💾 Сохранить заявку</button>
             </form>
         </div>
         
-        <!-- Вкладка: База -->
         <div id="dbTab" class="hidden">
             <h3>🏢 Объекты и адреса</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
-                <input type="text" id="newObjName" placeholder="Название объекта (напр. ЖК Лайм)" style="margin-bottom: 8px;">
-                <input type="text" id="newObjAddress" placeholder="Адрес (напр. ул. Староалексеевская 5А)" style="margin-bottom: 8px;">
+                <input type="text" id="newObjName" placeholder="Название объекта" style="margin-bottom: 8px;">
+                <input type="text" id="newObjAddress" placeholder="Адрес" style="margin-bottom: 8px;">
                 <input type="hidden" id="editObjId">
                 <button onclick="saveObject()" id="saveObjBtn">➕ Добавить объект</button>
             </div>
@@ -204,14 +190,13 @@
 
             <h3>⚠️ Виды проблем</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
-                <input type="text" id="newProblemName" placeholder="Напр. Застревание людей" style="margin-bottom: 8px;">
+                <input type="text" id="newProblemName" placeholder="Напр. Застревание" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
                 <button onclick="saveProblem()" id="saveProbBtn">➕ Добавить проблему</button>
             </div>
             <div id="problemsList"></div>
         </div>
         
-        <!-- Вкладка: Облако -->
         <div id="syncTab" class="hidden">
             <div id="notConnected">
                 <div class="info-box">
@@ -229,54 +214,50 @@
             <div id="connected" class="hidden">
                 <div class="info-box">
                     ✅ <strong>Подключено к Яндекс.Диску</strong><br>
-                    Файл: <code>/elevator_data.json</code> (в корне диска)
+                    Файл: <code>/elevator_data.json</code>
                 </div>
                 
                 <div class="sync-info">
                     <strong>💡 Как пользоваться:</strong><br>
-                    • <strong>⬆️ Загрузить</strong> — отправить данные из программы на Яндекс.Диск<br>
-                    • <strong>⬇️ Скачать</strong> — получить данные с Яндекс.Диска в программу (без дублирования)
+                    • <strong>⬆️ Загрузить</strong> — отправить данные на Яндекс.Диск<br>
+                    • <strong>⬇️ Скачать</strong> — получить данные с Яндекс.Диска
                 </div>
                 
                 <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить на Яндекс.Диск</button>
-                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">⬇️ Скачать с Яндекс.Диска</button>
+                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">️ Скачать с Яндекс.Диска</button>
                 <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON (вручную)</button>
-                <button onclick="importManual()" class="btn-warning">📥 Импорт JSON (вручную)</button>
-                <button onclick="exportToCSV()" class="btn-secondary"> Экспорт в CSV (Excel)</button>
+                <button onclick="importManual()" class="btn-warning"> Импорт JSON (вручную)</button>
+                <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV</button>
                 <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
                 
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
                     📊 <strong>Статистика:</strong><br>
                     Всего заявок: <span id="statTotal">0</span><br>
-                    Объектов в базе: <span id="statObj">0</span> | Видов проблем: <span id="statProb">0</span><br>
-                    Последняя загрузка: <span id="lastUpload">—</span><br>
-                    Последнее скачивание: <span id="lastDownload">—</span>
+                    Объектов: <span id="statObj">0</span> | Проблем: <span id="statProb">0</span><br>
+                    Загрузка: <span id="lastUpload">—</span><br>
+                    Скачивание: <span id="lastDownload">—</span>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // === КОНФИГУРАЦИЯ ===
         const YANDEX_TOKEN_KEY = 'yandexToken';
         const CLIENT_ID_KEY = 'yandexClientId';
         const UPLOAD_KEY = 'lastUploadTime';
         const DOWNLOAD_KEY = 'lastDownloadTime';
         const FILE_PATH = 'disk:/elevator_data.json';
         
-        // Загрузка данных из localStorage
         let requests = JSON.parse(localStorage.getItem('requests') || '[]');
         let objectsDB = JSON.parse(localStorage.getItem('objectsDB') || '[]');
         let problemsDB = JSON.parse(localStorage.getItem('problemsDB') || '[]');
         let yandexToken = localStorage.getItem(YANDEX_TOKEN_KEY) || '';
         let YANDEX_CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
 
-        // Инициализация даты
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('dateTime').value = now.toISOString().slice(0, 16);
 
-        // Если база пустая, добавим примеры
         if (objectsDB.length === 0) {
             objectsDB = [{ id: Date.now(), name: 'ЖК Лайм', address: 'ул. Староалексеевская 5А' }];
             localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
@@ -284,14 +265,13 @@
         if (problemsDB.length === 0) {
             problemsDB = [
                 { id: Date.now()+1, name: 'Застревание людей' },
-                { id: Date.now()+2, name: 'Лифт не едет / сломался' },
+                { id: Date.now()+2, name: 'Лифт не едет' },
                 { id: Date.now()+3, name: 'Не закрываются двери' },
                 { id: Date.now()+4, name: 'Нужен перезапуск' }
             ];
             localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
         }
 
-        // === ОБРАБОТКА REDIRECT ОТ ЯНДЕКСА ===
         function handleOAuthRedirect() {
             const hash = window.location.hash;
             if (hash && hash.includes('access_token')) {
@@ -308,18 +288,13 @@
         }
         handleOAuthRedirect();
 
-        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const tabName = this.getAttribute('data-tab');
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
-                
-                ['listTab', 'addTab', 'dbTab', 'syncTab'].forEach(id => {
-                    document.getElementById(id).classList.add('hidden');
-                });
+                ['listTab', 'addTab', 'dbTab', 'syncTab'].forEach(id => document.getElementById(id).classList.add('hidden'));
                 document.getElementById(tabName + 'Tab').classList.remove('hidden');
-                
                 if (tabName === 'list') renderRequests();
                 if (tabName === 'add') updateFormDropdowns();
                 if (tabName === 'db') renderDB();
@@ -327,7 +302,6 @@
             });
         });
 
-        // === УПРАВЛЕНИЕ БАЗОЙ ДАННЫХ ===
         function renderDB() {
             const objList = document.getElementById('objectsList');
             if (objectsDB.length === 0) {
@@ -346,16 +320,13 @@
                     </div>
                 `).join('');
             }
-
             const probList = document.getElementById('problemsList');
             if (problemsDB.length === 0) {
-                probList.innerHTML = '<div class="empty-state">Нет видов проблем</div>';
+                probList.innerHTML = '<div class="empty-state">Нет проблем</div>';
             } else {
                 probList.innerHTML = problemsDB.map(prob => `
                     <div class="db-item" style="border-left-color: #FF9800;">
-                        <div class="db-item-info">
-                            <div class="db-item-title">${prob.name}</div>
-                        </div>
+                        <div class="db-item-info"><div class="db-item-title">${prob.name}</div></div>
                         <div class="db-item-actions">
                             <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
                             <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button>
@@ -366,38 +337,30 @@
         }
 
         function updateFormDropdowns() {
-            const objSelect = document.getElementById('objectSelect');
-            objSelect.innerHTML = '<option value="">-- Выберите объект из базы --</option>' + 
+            document.getElementById('objectSelect').innerHTML = '<option value="">-- Выберите объект --</option>' + 
                 objectsDB.map(obj => `<option value="${obj.id}" data-address="${obj.address}">${obj.name}</option>`).join('');
-            
-            const probSelect = document.getElementById('problemSelect');
-            probSelect.innerHTML = '<option value="">-- Выберите или опишите ниже --</option>' + 
+            document.getElementById('problemSelect').innerHTML = '<option value="">-- Выберите --</option>' + 
                 problemsDB.map(prob => `<option value="${prob.name}">${prob.name}</option>`).join('');
         }
 
         function autoFillAddress() {
             const select = document.getElementById('objectSelect');
-            const selectedOption = select.options[select.selectedIndex];
-            if (selectedOption && selectedOption.getAttribute('data-address')) {
-                document.getElementById('address').value = selectedOption.getAttribute('data-address');
+            const selected = select.options[select.selectedIndex];
+            if (selected.getAttribute('data-address')) {
+                document.getElementById('address').value = selected.getAttribute('data-address');
             }
         }
 
         function autoFillIssue() {
-            const select = document.getElementById('problemSelect');
-            if (select.value) {
-                document.getElementById('issue').value = select.value;
-            }
+            const val = document.getElementById('problemSelect').value;
+            if (val) document.getElementById('issue').value = val;
         }
 
-        // --- Объекты ---
         function saveObject() {
             const name = document.getElementById('newObjName').value.trim();
             const address = document.getElementById('newObjAddress').value.trim();
             const editId = document.getElementById('editObjId').value;
-            
-            if (!name || !address) { alert('Заполните название и адрес'); return; }
-
+            if (!name || !address) { alert('Заполните поля'); return; }
             if (editId) {
                 const obj = objectsDB.find(o => o.id == editId);
                 obj.name = name; obj.address = address;
@@ -406,7 +369,6 @@
             } else {
                 objectsDB.push({ id: Date.now(), name, address });
             }
-            
             localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
             document.getElementById('newObjName').value = '';
             document.getElementById('newObjAddress').value = '';
@@ -418,34 +380,29 @@
             document.getElementById('newObjName').value = obj.name;
             document.getElementById('newObjAddress').value = obj.address;
             document.getElementById('editObjId').value = id;
-            document.getElementById('saveObjBtn').textContent = '💾 Сохранить изменения';
-            window.scrollTo(0, 0);
+            document.getElementById('saveObjBtn').textContent = '💾 Сохранить';
         }
 
         function deleteObject(id) {
-            if (confirm('Удалить этот объект?')) {
+            if (confirm('Удалить?')) {
                 objectsDB = objectsDB.filter(o => o.id !== id);
                 localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
                 renderDB();
             }
         }
 
-        // --- Проблемы ---
         function saveProblem() {
             const name = document.getElementById('newProblemName').value.trim();
             const editId = document.getElementById('editProblemId').value;
-            
-            if (!name) { alert('Введите название проблемы'); return; }
-
+            if (!name) { alert('Введите название'); return; }
             if (editId) {
                 const prob = problemsDB.find(p => p.id == editId);
                 prob.name = name;
                 document.getElementById('editProblemId').value = '';
-                document.getElementById('saveProbBtn').textContent = '➕ Добавить проблему';
+                document.getElementById('saveProbBtn').textContent = '➕ Добавить';
             } else {
                 problemsDB.push({ id: Date.now(), name });
             }
-            
             localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
             document.getElementById('newProblemName').value = '';
             renderDB();
@@ -455,29 +412,25 @@
             const prob = problemsDB.find(p => p.id === id);
             document.getElementById('newProblemName').value = prob.name;
             document.getElementById('editProblemId').value = id;
-            document.getElementById('saveProbBtn').textContent = '💾 Сохранить изменения';
-            window.scrollTo(0, document.getElementById('problemsList').offsetTop);
+            document.getElementById('saveProbBtn').textContent = ' Сохранить';
         }
 
         function deleteProblem(id) {
-            if (confirm('Удалить этот вид проблемы?')) {
+            if (confirm('Удалить?')) {
                 problemsDB = problemsDB.filter(p => p.id !== id);
                 localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
                 renderDB();
             }
         }
 
-        // === РАБОТА С ЗАЯВКАМИ ===
         document.getElementById('requestForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const objSelect = document.getElementById('objectSelect');
             const objName = objSelect.options[objSelect.selectedIndex].text;
-
             const request = {
                 id: Date.now(),
                 dateTime: document.getElementById('dateTime').value,
-                objectName: objName !== '-- Выберите объект из базы --' ? objName : '',
+                objectName: objName !== '-- Выберите объект --' ? objName : '',
                 address: document.getElementById('address').value,
                 entrance: document.getElementById('entrance').value,
                 section: document.getElementById('section').value,
@@ -489,21 +442,17 @@
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
-            
             requests.unshift(request);
             localStorage.setItem('requests', JSON.stringify(requests));
-            
             this.reset();
             const now2 = new Date();
             now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
             document.getElementById('dateTime').value = now2.toISOString().slice(0, 16);
-            
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector('[data-tab="list"]').classList.add('active');
             document.getElementById('addTab').classList.add('hidden');
             document.getElementById('listTab').classList.remove('hidden');
             renderRequests();
-            
             alert('✅ Заявка сохранена');
         });
 
@@ -512,19 +461,16 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             let filtered = requests.filter(r => {
                 const matchStatus = filter === 'all' || r.status === filter;
-                const matchSearch = !search || 
-                    (r.address && r.address.toLowerCase().includes(search)) ||
+                const matchSearch = !search || (r.address && r.address.toLowerCase().includes(search)) ||
                     (r.elevator && r.elevator.toLowerCase().includes(search)) ||
                     (r.objectName && r.objectName.toLowerCase().includes(search));
                 return matchStatus && matchSearch;
             });
-            
             const container = document.getElementById('requestsList');
             if (filtered.length === 0) {
                 container.innerHTML = '<div class="empty-state">Нет заявок</div>';
                 return;
             }
-            
             container.innerHTML = filtered.map(r => {
                 const date = new Date(r.dateTime).toLocaleString('ru-RU');
                 const statusText = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}[r.status];
@@ -553,22 +499,21 @@
         function changeStatus(id) {
             const request = requests.find(r => r.id === id);
             const statuses = ['new', 'progress', 'done'];
-            const currentIndex = statuses.indexOf(request.status);
-            request.status = statuses[(currentIndex + 1) % statuses.length];
+            const idx = statuses.indexOf(request.status);
+            request.status = statuses[(idx + 1) % statuses.length];
             request.updatedAt = new Date().toISOString();
             localStorage.setItem('requests', JSON.stringify(requests));
             renderRequests();
         }
 
         function deleteRequest(id) {
-            if (confirm('Удалить заявку?')) {
+            if (confirm('Удалить?')) {
                 requests = requests.filter(r => r.id !== id);
                 localStorage.setItem('requests', JSON.stringify(requests));
                 renderRequests();
             }
         }
 
-        // === ЯНДЕКС.ДИСК API ===
         function updateUI() {
             const statusEl = document.getElementById('syncStatus');
             if (yandexToken) {
@@ -588,96 +533,145 @@
 
         function saveClientId() {
             YANDEX_CLIENT_ID = document.getElementById('clientIdInput').value.trim();
-            if (!YANDEX_CLIENT_ID) { alert('❌ Введите Client ID'); return; }
+            if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; }
             localStorage.setItem(CLIENT_ID_KEY, YANDEX_CLIENT_ID);
             alert('✅ Client ID сохранён');
         }
 
         function startOAuth() {
-            if (!YANDEX_CLIENT_ID) { alert('❌ Сначала введите и сохраните Client ID'); return; }
+            if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; }
             const redirectUri = window.location.origin + window.location.pathname;
-            const url = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-            window.location.href = url;
+            window.location.href = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`;
         }
 
         function disconnect() {
-            if (confirm('Отключить Яндекс.Диск? Данные в приложении останутся.')) {
+            if (confirm('Отключить?')) {
                 localStorage.removeItem(YANDEX_TOKEN_KEY);
                 yandexToken = '';
                 updateUI();
             }
         }
 
-        async function yandexFetch(url, options = {}) {
-            options.headers = options.headers || {};
-            options.headers['Authorization'] = `OAuth ${yandexToken}`;
-            options.headers['Accept'] = 'application/json';
-            const response = await fetch(url, options);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    yandexToken = '';
-                    localStorage.removeItem(YANDEX_TOKEN_KEY);
-                    updateUI();
-                    throw new Error('Токен истёк. Подключите Яндекс.Диск заново.');
-                }
-                throw new Error(`Ошибка API: ${response.status}`);
-            }
-            return response;
-        }
-
-        // === ЗАГРУЗКА НА ЯНДЕКС.ДИСК ===
         async function uploadToYandex() {
-            if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
-            
+            if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; }
             const btn = document.getElementById('btnUpload');
-            const originalText = btn.textContent;
-            btn.textContent = '⏳ Загрузка...';
+            const original = btn.textContent;
+            btn.textContent = ' Загрузка...';
             btn.disabled = true;
-
             try {
                 const uploadUrl = `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${encodeURIComponent(FILE_PATH)}&overwrite=true`;
-                const resp = await yandexFetch(uploadUrl);
+                const resp = await fetch(uploadUrl, {
+                    headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' }
+                });
+                if (!resp.ok) throw new Error(`Ошибка: ${resp.status}`);
                 const data = await resp.json();
-                
-                const payload = {
-                    requests: requests,
-                    objects: objectsDB,
-                    problems: problemsDB,
-                    lastSync: new Date().toISOString()
-                };
+                const payload = { requests, objects: objectsDB, problems: problemsDB, lastSync: new Date().toISOString() };
                 const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
                 const uploadResp = await fetch(data.href, { method: 'PUT', body: blob });
-                
-                if (!uploadResp.ok) {
-                    throw new Error(`Ошибка загрузки файла: ${uploadResp.status}`);
-                }
-
+                if (!uploadResp.ok) throw new Error(`HTTP ${uploadResp.status}`);
                 localStorage.setItem(UPLOAD_KEY, new Date().toISOString());
                 updateStats();
-                alert('✅ Данные загружены на Яндекс.Диск!');
+                alert('✅ Загружено на Яндекс.Диск!');
             } catch (e) {
-                console.error(e);
-                alert('❌ Ошибка загрузки: ' + e.message);
+                alert('❌ Ошибка: ' + e.message);
             } finally {
-                btn.textContent = originalText;
+                btn.textContent = original;
                 btn.disabled = false;
             }
         }
 
-        // === РУЧНОЙ ЭКСПОРТ/ИМПОРТ (ОБХОД CORS) ===
+        async function downloadFromYandex() {
+            if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; }
+            const btn = document.getElementById('btnDownload');
+            const original = btn.textContent;
+            btn.textContent = ' Скачивание...';
+            btn.disabled = true;
+            try {
+                // Проверяем существование файла
+                const checkResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`, {
+                    headers: { 'Authorization': `OAuth ${yandexToken}` }
+                });
+                if (!checkResp.ok) {
+                    if (checkResp.status === 404) throw new Error('FILE_NOT_FOUND');
+                    throw new Error(`Ошибка: ${checkResp.status}`);
+                }
+
+                // Получаем ссылку для скачивания
+                const urlResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`, {
+                    headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' }
+                });
+                if (!urlResp.ok) throw new Error(`Ошибка: ${urlResp.status}`);
+                const urlData = await urlResp.json();
+                
+                // Скачиваем файл
+                const fileResp = await fetch(urlData.href);
+                if (!fileResp.ok) throw new Error(`HTTP ${fileResp.status}`);
+                const text = await fileResp.text();
+                const cloudData = JSON.parse(text);
+                
+                processCloudData(cloudData);
+            } catch (e) {
+                if (e.message === 'FILE_NOT_FOUND' || e.message.includes('404')) {
+                    alert('⚠️ Файл не найден на Яндекс.Диске.\n\nСначала загрузите данные:\n1. Откройте на первом устройстве\n2. Нажмите "⬆️ Загрузить на Яндекс.Диск"');
+                } else {
+                    alert('❌ Ошибка: ' + e.message);
+                }
+            } finally {
+                btn.textContent = original;
+                btn.disabled = false;
+            }
+        }
+
+        function processCloudData(cloudData) {
+            let cloudRequests = [], cloudObjects = [], cloudProblems = [];
+            if (Array.isArray(cloudData)) {
+                cloudRequests = cloudData;
+            } else {
+                cloudRequests = cloudData.requests || [];
+                cloudObjects = cloudData.objects || [];
+                cloudProblems = cloudData.problems || [];
+            }
+
+            // Мердж заявок
+            const reqMap = new Map(requests.map(r => [r.id, r]));
+            for (const cr of cloudRequests) {
+                if (reqMap.has(cr.id)) {
+                    const lr = reqMap.get(cr.id);
+                    if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) Object.assign(lr, cr);
+                } else {
+                    requests.push(cr);
+                }
+            }
+            requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+            // Мердж объектов
+            const objMap = new Map(objectsDB.map(o => [o.id, o]));
+            for (const co of cloudObjects) {
+                if (!objMap.has(co.id)) objectsDB.push(co);
+            }
+
+            // Мердж проблем
+            const probMap = new Map(problemsDB.map(p => [p.id, p]));
+            for (const cp of cloudProblems) {
+                if (!probMap.has(cp.id)) problemsDB.push(cp);
+            }
+
+            localStorage.setItem('requests', JSON.stringify(requests));
+            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
+            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
+            localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
+            updateUI();
+            renderRequests();
+            alert(`✅ Скачано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}\nПроблем: ${problemsDB.length}`);
+        }
+
         function exportManual() {
-            const payload = {
-                requests: requests,
-                objects: objectsDB,
-                problems: problemsDB,
-                exportedAt: new Date().toISOString()
-            };
+            const payload = { requests, objects: objectsDB, problems: problemsDB, exportedAt: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `elevator_backup_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
-            alert('✅ Файл экспортирован! Загрузите его на Яндекс.Диск вручную.');
         }
 
         function importManual() {
@@ -687,50 +681,37 @@
             input.onchange = function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     try {
                         const data = JSON.parse(event.target.result);
-                        
-                        // Мердж данных
+                        const reqMap = new Map(requests.map(r => [r.id, r]));
                         if (data.requests) {
-                            const localReqMap = new Map(requests.map(r => [r.id, r]));
                             for (const cr of data.requests) {
-                                if (!localReqMap.has(cr.id)) {
-                                    requests.push(cr);
-                                }
+                                if (!reqMap.has(cr.id)) requests.push(cr);
                             }
                             requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
                         }
-                        
+                        const objMap = new Map(objectsDB.map(o => [o.id, o]));
                         if (data.objects) {
-                            const localObjMap = new Map(objectsDB.map(o => [o.id, o]));
                             for (const co of data.objects) {
-                                if (!localObjMap.has(co.id)) {
-                                    objectsDB.push(co);
-                                }
+                                if (!objMap.has(co.id)) objectsDB.push(co);
                             }
                         }
-                        
+                        const probMap = new Map(problemsDB.map(p => [p.id, p]));
                         if (data.problems) {
-                            const localProbMap = new Map(problemsDB.map(p => [p.id, p]));
                             for (const cp of data.problems) {
-                                if (!localProbMap.has(cp.id)) {
-                                    problemsDB.push(cp);
-                                }
+                                if (!probMap.has(cp.id)) problemsDB.push(cp);
                             }
                         }
-                        
                         localStorage.setItem('requests', JSON.stringify(requests));
                         localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
                         localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-                        
                         updateUI();
                         renderRequests();
-                        alert('✅ Данные импортированы!');
+                        alert('✅ Импортировано!');
                     } catch (err) {
-                        alert('❌ Ошибка импорта: ' + err.message);
+                        alert(' Ошибка: ' + err.message);
                     }
                 };
                 reader.readAsText(file);
@@ -738,157 +719,19 @@
             input.click();
         }
 
-        // === СКАЧИВАНИЕ С ЯНДЕКС.ДИСКА ===
-        async function downloadFromYandex() {
-            if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
-            
-            const btn = document.getElementById('btnDownload');
-            const originalText = btn.textContent;
-            btn.textContent = '⏳ Скачивание...';
-            btn.disabled = true;
-
-            try {
-                // Проверяем существование файла
-                const checkUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`;
-                const checkResp = await fetch(checkUrl, {
-                    headers: {
-                        'Authorization': `OAuth ${yandexToken}`,
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (!checkResp.ok) {
-                    if (checkResp.status === 404) {
-                        throw new Error('Файл не найден на Яндекс.Диске');
-                    }
-                    throw new Error(`Ошибка проверки файла: ${checkResp.status}`);
-                }
-
-                // Получаем ссылку для скачивания
-                const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
-                const resp = await fetch(url, {
-                    headers: {
-                        'Authorization': `OAuth ${yandexToken}`,
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                const data = await resp.json();
-                
-                // Пробуем скачать через fetch с no-cors
-                try {
-                    const fileResp = await fetch(data.href, {
-                        mode: 'cors',
-                        headers: {
-                            'Accept': 'application/json, text/plain'
-                        }
-                    });
-                    
-                    if (!fileResp.ok) {
-                        throw new Error(`HTTP ${fileResp.status}`);
-                    }
-                    
-                    const fileContent = await fileResp.text();
-                    const cloudData = JSON.parse(fileContent);
-                    
-                    processCloudData(cloudData);
-                } catch (corsError) {
-                    console.warn('CORS error, using alternative method:', corsError);
-                    // Если CORS не работает, предлагаем ручной метод
-                    throw new Error('CORS блокировка. Используйте кнопки "Экспорт JSON" и "Импорт JSON" для переноса данных между устройствами.');
-                }
-
-            } catch (e) {
-                console.error(e);
-                if (e.message.includes('404') || e.message.includes('не найден')) {
-                    alert('⚠️ На Яндекс.Диске ещё нет данных.\n\nИспользуйте ручной метод:\n1. На первом устройстве: " Экспорт JSON"\n2. Загрузите файл на Яндекс.Диск через браузер\n3. На втором устройстве: скачайте файл с Яндекс.Диска\n4. Нажмите "📥 Импорт JSON"');
-                } else {
-                    alert(' Ошибка скачивания: ' + e.message);
-                }
-            } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        function processCloudData(cloudData) {
-            let cloudRequests = [], cloudObjects = [], cloudProblems = [];
-            if (cloudData) {
-                if (Array.isArray(cloudData)) {
-                    cloudRequests = cloudData;
-                } else {
-                    cloudRequests = cloudData.requests || [];
-                    cloudObjects = cloudData.objects || [];
-                    cloudProblems = cloudData.problems || [];
-                }
-            }
-
-            // Мердж заявок
-            const localReqMap = new Map(requests.map(r => [r.id, r]));
-            for (const cr of cloudRequests) {
-                if (localReqMap.has(cr.id)) {
-                    const lr = localReqMap.get(cr.id);
-                    if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) {
-                        Object.assign(lr, cr);
-                    }
-                } else {
-                    requests.push(cr);
-                }
-            }
-            requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-
-            // Мердж объектов
-            const localObjMap = new Map(objectsDB.map(o => [o.id, o]));
-            for (const co of cloudObjects) {
-                if (!localObjMap.has(co.id)) {
-                    objectsDB.push(co);
-                }
-            }
-
-            // Мердж проблем
-            const localProbMap = new Map(problemsDB.map(p => [p.id, p]));
-            for (const cp of cloudProblems) {
-                if (!localProbMap.has(cp.id)) {
-                    problemsDB.push(cp);
-                }
-            }
-
-            localStorage.setItem('requests', JSON.stringify(requests));
-            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-
-            localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
-            updateUI();
-            renderRequests();
-            
-            const stats = `Заявок: ${requests.length}, Объектов: ${objectsDB.length}, Проблем: ${problemsDB.length}`;
-            alert('✅ Данные скачаны с Яндекс.Диска!\n' + stats);
-        }
-
         function updateStats() {
             document.getElementById('statTotal').textContent = requests.length;
             document.getElementById('statObj').textContent = objectsDB.length;
             document.getElementById('statProb').textContent = problemsDB.length;
-            
-            const lastUpload = localStorage.getItem(UPLOAD_KEY);
-            document.getElementById('lastUpload').textContent = lastUpload ? new Date(lastUpload).toLocaleString('ru-RU') : '—';
-            
-            const lastDownload = localStorage.getItem(DOWNLOAD_KEY);
-            document.getElementById('lastDownload').textContent = lastDownload ? new Date(lastDownload).toLocaleString('ru-RU') : '—';
+            document.getElementById('lastUpload').textContent = localStorage.getItem(UPLOAD_KEY) ? new Date(localStorage.getItem(UPLOAD_KEY)).toLocaleString('ru-RU') : '—';
+            document.getElementById('lastDownload').textContent = localStorage.getItem(DOWNLOAD_KEY) ? new Date(localStorage.getItem(DOWNLOAD_KEY)).toLocaleString('ru-RU') : '—';
         }
 
         function exportToCSV() {
             const headers = ['Дата', 'Объект', 'Адрес', 'Подъезд', 'Секция', 'Лифт', 'Этаж', 'Проблема', 'Статус', 'Комментарий'];
             const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'};
-            const rows = requests.map(r => [
-                new Date(r.dateTime).toLocaleString('ru-RU'),
-                r.objectName || '', r.address, r.entrance, r.section || '',
-                r.elevator || '', r.floor || '', r.issue || '',
-                statusMap[r.status], r.comment || ''
-            ]);
-            const csv = [headers, ...rows]
-                .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-                .join('\n');
+            const rows = requests.map(r => [new Date(r.dateTime).toLocaleString('ru-RU'), r.objectName || '', r.address, r.entrance, r.section || '', r.elevator || '', r.floor || '', r.issue || '', statusMap[r.status], r.comment || '']);
+            const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -896,7 +739,6 @@
             link.click();
         }
 
-        // Инициализация
         updateUI();
         renderRequests();
     </script>
