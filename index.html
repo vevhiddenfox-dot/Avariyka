@@ -84,11 +84,21 @@
             background: #FFF8E1; padding: 12px; border-radius: 8px;
             margin-bottom: 16px; font-size: 13px; color: #F57F17; line-height: 1.5;
         }
+        .instruction-box {
+            background: #E8F5E9; padding: 16px; border-radius: 8px;
+            margin: 12px 0; border-left: 4px solid #4CAF50;
+        }
+        .instruction-box ol {
+            margin: 12px 0; padding-left: 24px;
+        }
+        .instruction-box li {
+            margin: 8px 0; line-height: 1.6;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1> Аварийные заявки</h1>
+        <h1>🛗 Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
         
         <div class="tabs">
@@ -107,7 +117,7 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
+            <input type="text" id="searchInput" placeholder=" Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
         
@@ -165,7 +175,7 @@
                     <label>Комментарий</label>
                     <textarea id="comment"></textarea>
                 </div>
-                <button type="submit"> Сохранить</button>
+                <button type="submit">💾 Сохранить</button>
             </form>
         </div>
         
@@ -206,23 +216,39 @@
                     ✅ <strong>Подключено</strong><br>
                     Файл: <code>/elevator_data.json</code>
                 </div>
-                <div class="sync-info">
-                    <strong>💡 Синхронизация:</strong><br>
-                    ⬆️ Загрузить — отправить данные на Яндекс.Диск<br>
-                    ⬇️ Скачать — получить данные с Яндекс.Диска (заменяет локальные)
+                
+                <div class="instruction-box">
+                    <strong>📤 Как загрузить данные на Яндекс.Диск:</strong>
+                    <ol>
+                        <li>Нажмите кнопку <strong>"⬆️ Загрузить"</strong></li>
+                        <li>Данные автоматически сохранятся в файле <code>/elevator_data.json</code></li>
+                    </ol>
                 </div>
-                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить</button>
-                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">⬇️ Скачать</button>
-                <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON</button>
-                <button onclick="importManual()" class="btn-warning">📥 Импорт JSON</button>
+                
+                <div class="instruction-box">
+                    <strong>📥 Как скачать данные с Яндекс.Диска:</strong>
+                    <ol>
+                        <li>Откройте <a href="https://disk.yandex.ru" target="_blank">Яндекс.Диск</a> в браузере</li>
+                        <li>Найдите файл <code>elevator_data.json</code></li>
+                        <li>Скачайте его на устройство</li>
+                        <li>Вернитесь в программу</li>
+                        <li>Нажмите <strong>"📥 Импорт JSON"</strong></li>
+                        <li>Выберите скачанный файл</li>
+                        <li>Данные полностью заменятся</li>
+                    </ol>
+                </div>
+                
+                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить на Яндекс.Диск</button>
+                <button onclick="importManual()" class="btn-warning">📥 Импорт JSON (после скачивания)</button>
+                <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON (резервная копия)</button>
                 <button onclick="exportToCSV()" class="btn-secondary">📥 CSV</button>
-                <button onclick="disconnect()" class="btn-danger">🚪 Отключить</button>
+                <button onclick="disconnect()" class="btn-danger"> Отключить</button>
+                
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
                     📊 <strong>Статистика:</strong><br>
                     Заявок: <span id="statTotal">0</span><br>
                     Объектов: <span id="statObj">0</span> | Проблем: <span id="statProb">0</span><br>
-                    Загрузка: <span id="lastUpload">—</span><br>
-                    Скачивание: <span id="lastDownload">—</span>
+                    Последняя загрузка: <span id="lastUpload">—</span>
                 </div>
             </div>
         </div>
@@ -232,7 +258,6 @@
         const YANDEX_TOKEN_KEY = 'yandexToken';
         const CLIENT_ID_KEY = 'yandexClientId';
         const UPLOAD_KEY = 'lastUploadTime';
-        const DOWNLOAD_KEY = 'lastDownloadTime';
         const FILE_PATH = 'disk:/elevator_data.json';
         
         let requests = JSON.parse(localStorage.getItem('requests') || '[]');
@@ -312,7 +337,7 @@
                         <div class="db-item-info"><div class="db-item-title">${prob.name}</div></div>
                         <div class="db-item-actions">
                             <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">️</button>
+                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button>
                         </div>
                     </div>
                 `).join('');
@@ -362,7 +387,7 @@
             document.getElementById('newObjName').value = obj.name;
             document.getElementById('newObjAddress').value = obj.address;
             document.getElementById('editObjId').value = id;
-            document.getElementById('saveObjBtn').textContent = ' Сохранить';
+            document.getElementById('saveObjBtn').textContent = '💾 Сохранить';
         }
 
         function deleteObject(id) {
@@ -381,7 +406,7 @@
                 const prob = problemsDB.find(p => p.id == editId);
                 prob.name = name;
                 document.getElementById('editProblemId').value = '';
-                document.getElementById('saveProbBtn').textContent = '➕ Добавить';
+                document.getElementById('saveProbBtn').textContent = ' Добавить';
             } else {
                 problemsDB.push({ id: Date.now(), name });
             }
@@ -463,7 +488,7 @@
                             <span class="status-badge status-${r.status}">${statusText}</span>
                         </div>
                         <div class="request-info">
-                            ${r.objectName ? `<strong> ${r.objectName}</strong><br>` : ''}
+                            ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
                             <strong>📍 ${r.address}</strong><br>
                             Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
                             <strong>Проблема:</strong> ${r.issue || 'Не указана'}
@@ -553,145 +578,13 @@
                 if (!uploadResp.ok) throw new Error(`HTTP ${uploadResp.status}`);
                 localStorage.setItem(UPLOAD_KEY, new Date().toISOString());
                 updateStats();
-                alert('✅ Загружено!');
+                alert('✅ Загружено на Яндекс.Диск!\n\nТеперь на другом устройстве:\n1. Откройте Яндекс.Диск в браузере\n2. Скачайте файл elevator_data.json\n3. Нажмите "📥 Импорт JSON"');
             } catch (e) {
                 alert('❌ Ошибка: ' + e.message);
             } finally {
                 btn.textContent = original;
                 btn.disabled = false;
             }
-        }
-
-        async function downloadFromYandex() {
-            if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; }
-            const btn = document.getElementById('btnDownload');
-            const original = btn.textContent;
-            btn.textContent = '⏳ Получение ссылки...';
-            btn.disabled = true;
-            
-            try {
-                // 1. Проверяем, существует ли файл
-                const checkResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`, {
-                    headers: { 'Authorization': `OAuth ${yandexToken}` }
-                });
-                if (!checkResp.ok) {
-                    if (checkResp.status === 404) throw new Error('FILE_NOT_FOUND');
-                    throw new Error(`Ошибка: ${checkResp.status}`);
-                }
-
-                // 2. Получаем прямую ссылку для скачивания
-                const urlResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`, {
-                    headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' }
-                });
-                if (!urlResp.ok) throw new Error(`Ошибка: ${urlResp.status}`);
-                const urlData = await urlResp.json();
-                const directLink = urlData.href;
-                
-                console.log('Ссылка получена:', directLink);
-
-                // 3. Пробуем скачать через несколько прокси по очереди
-                const proxies = [
-                    'https://corsproxy.io/?' + encodeURIComponent(directLink),
-                    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(directLink),
-                    'https://thingproxy.freeboard.io/fetch/' + directLink
-                ];
-                
-                let fileContent = null;
-                
-                for (const proxyUrl of proxies) {
-                    try {
-                        console.log('Пробуем прокси:', proxyUrl);
-                        const resp = await fetch(proxyUrl, { 
-                            method: 'GET',
-                            headers: { 'Accept': 'application/json' }
-                        });
-                        if (resp.ok) {
-                            fileContent = await resp.text();
-                            console.log('✅ Скачано через прокси');
-                            break;
-                        }
-                    } catch (e) {
-                        console.warn('Прокси не сработал:', e.message);
-                    }
-                }
-
-                // 4. Если прокси не помогли — открываем ссылку в новой вкладке
-                if (!fileContent) {
-                    console.warn('Все прокси не сработали, открываем в новой вкладке');
-                    
-                    const userChoice = confirm(
-                        '⚠️ Автоматическое скачивание недоступно из-за ограничений браузера.\n\n' +
-                        'Нажмите ОК — откроется новая вкладка, файл скачается автоматически.\n' +
-                        'После скачивания нажмите " Импорт JSON" и выберите файл.\n\n' +
-                        'Отменить — ничего не делать.'
-                    );
-                    
-                    if (userChoice) {
-                        window.open(directLink, '_blank');
-                        alert('📥 Файл скачивается в новой вкладке.\n\nПосле завершения:\n1. Вернитесь в программу\n2. Нажмите "📥 Импорт JSON"\n3. Выберите скачанный файл');
-                    }
-                    return;
-                }
-
-                // 5. Обрабатываем скачанные данные
-                const cloudData = JSON.parse(fileContent);
-                processCloudData(cloudData);
-                
-            } catch (e) {
-                if (e.message === 'FILE_NOT_FOUND' || e.message.includes('404')) {
-                    alert('⚠️ Файл не найден на Яндекс.Диске.\n\nСначала загрузите данные:\n1. Откройте на первом устройстве\n2. Нажмите "⬆️ Загрузить"');
-                } else {
-                    console.error(e);
-                    alert('❌ Ошибка: ' + e.message);
-                }
-            } finally {
-                btn.textContent = original;
-                btn.disabled = false;
-            }
-        }
-
-        function processCloudData(cloudData) {
-            let cloudRequests = [], cloudObjects = [], cloudProblems = [];
-            if (Array.isArray(cloudData)) {
-                cloudRequests = cloudData;
-            } else {
-                cloudRequests = cloudData.requests || [];
-                cloudObjects = cloudData.objects || [];
-                cloudProblems = cloudData.problems || [];
-            }
-
-            // Показываем пользователю, что будет заменено
-            const confirmMsg = `Найдено данных на Яндекс.Диске:\n` +
-                `• Заявок: ${cloudRequests.length}\n` +
-                `• Объектов: ${cloudObjects.length}\n` +
-                `• Проблем: ${cloudProblems.length}\n\n` +
-                `Локально у вас сейчас:\n` +
-                `• Заявок: ${requests.length}\n` +
-                `• Объектов: ${objectsDB.length}\n` +
-                `• Проблем: ${problemsDB.length}\n\n` +
-                `Заменить локальные данные облачными?\n` +
-                `(Все изменения будут синхронизированы)`;
-            
-            if (!confirm(confirmMsg)) {
-                alert('Скачивание отменено');
-                return;
-            }
-
-            // Полностью заменяем локальные данные облачными
-            requests = cloudRequests;
-            objectsDB = cloudObjects;
-            problemsDB = cloudProblems;
-
-            // Сохраняем
-            localStorage.setItem('requests', JSON.stringify(requests));
-            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-            localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
-            
-            updateUI();
-            renderRequests();
-            
-            alert(`✅ Данные синхронизированы!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}\nПроблем: ${problemsDB.length}`);
         }
 
         function exportManual() {
@@ -704,6 +597,9 @@
         }
 
         function importManual() {
+            const confirmMsg = `Внимание! Все текущие данные будут ЗАМЕНЕНЫ данными из файла.\n\nПродолжить?`;
+            if (!confirm(confirmMsg)) return;
+            
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
@@ -715,7 +611,7 @@
                     try {
                         const data = JSON.parse(event.target.result);
                         
-                        // Полная замена данных (как при скачивании с облака)
+                        // Полная замена данных
                         if (data.requests) requests = data.requests;
                         if (data.objects) objectsDB = data.objects;
                         if (data.problems) problemsDB = data.problems;
@@ -725,7 +621,7 @@
                         localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
                         updateUI();
                         renderRequests();
-                        alert('✅ Импортировано!');
+                        alert(`✅ Импортировано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}\nПроблем: ${problemsDB.length}`);
                     } catch (err) {
                         alert('❌ Ошибка: ' + err.message);
                     }
@@ -740,7 +636,6 @@
             document.getElementById('statObj').textContent = objectsDB.length;
             document.getElementById('statProb').textContent = problemsDB.length;
             document.getElementById('lastUpload').textContent = localStorage.getItem(UPLOAD_KEY) ? new Date(localStorage.getItem(UPLOAD_KEY)).toLocaleString('ru-RU') : '—';
-            document.getElementById('lastDownload').textContent = localStorage.getItem(DOWNLOAD_KEY) ? new Date(localStorage.getItem(DOWNLOAD_KEY)).toLocaleString('ru-RU') : '—';
         }
 
         function exportToCSV() {
