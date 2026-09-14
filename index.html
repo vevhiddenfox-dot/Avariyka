@@ -96,7 +96,7 @@
 </head>
 <body>
     <div class="container">
-        <h1> Аварийные заявки</h1>
+        <h1>🛗 Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
         
         <div class="tabs">
@@ -116,7 +116,7 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу, лифту..." 
+            <input type="text" id="searchInput" placeholder=" Поиск по адресу, лифту..." 
                    oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
@@ -223,7 +223,7 @@
                     <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
                 </div>
                 <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить Client ID</button>
-                <button onclick="startOAuth()">🔐 Войти через Яндекс</button>
+                <button onclick="startOAuth()"> Войти через Яндекс</button>
             </div>
             
             <div id="connected" class="hidden">
@@ -233,7 +233,7 @@
                 </div>
                 
                 <div class="sync-info">
-                    <strong>💡 Как пользоваться:</strong><br>
+                    <strong> Как пользоваться:</strong><br>
                     • <strong>⬆️ Загрузить</strong> — отправить данные из программы на Яндекс.Диск<br>
                     • <strong>⬇️ Скачать</strong> — получить данные с Яндекс.Диска в программу (без дублирования)
                 </div>
@@ -625,7 +625,7 @@
 
         // === ЗАГРУЗКА НА ЯНДЕКС.ДИСК ===
         async function uploadToYandex() {
-            if (!yandexToken) { alert(' Сначала подключите Яндекс.Диск'); return; }
+            if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
             
             const btn = document.getElementById('btnUpload');
             const originalText = btn.textContent;
@@ -655,14 +655,14 @@
                 alert('✅ Данные загружены на Яндекс.Диск!');
             } catch (e) {
                 console.error(e);
-                alert(' Ошибка загрузки: ' + e.message);
+                alert('❌ Ошибка загрузки: ' + e.message);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
             }
         }
 
-        // === СКАЧИВАНИЕ С ЯНДЕКС.ДИСКА ===
+        // === СКАЧИВАНИЕ С ЯНДЕКС.ДИСКА (ИСПРАВЛЕНО) ===
         async function downloadFromYandex() {
             if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
             
@@ -672,14 +672,6 @@
             btn.disabled = true;
 
             try {
-                // Сначала проверяем, существует ли файл
-                const checkUrl = `https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`;
-                const checkResp = await yandexFetch(checkUrl);
-                
-                if (!checkResp.ok) {
-                    throw new Error('Файл не найден на Яндекс.Диске. Сначала загрузите данные с первого устройства.');
-                }
-                
                 // Получаем ссылку для скачивания
                 const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
                 const resp = await yandexFetch(url);
@@ -687,23 +679,20 @@
                 
                 console.log('Ссылка для скачивания:', data.href);
                 
-                // Скачиваем файл с помощью XMLHttpRequest для обхода CORS
-                const fileContent = await new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', data.href, true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            resolve(xhr.responseText);
-                        } else {
-                            reject(new Error(`HTTP ${xhr.status}`));
-                        }
-                    };
-                    xhr.onerror = function() {
-                        reject(new Error('Network error'));
-                    };
-                    xhr.send();
+                // Скачиваем файл через fetch с mode: 'no-cors'
+                const fileResp = await fetch(data.href, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
                 
+                if (!fileResp.ok) {
+                    throw new Error(`HTTP ошибка: ${fileResp.status}`);
+                }
+                
+                const fileContent = await fileResp.text();
                 const cloudData = JSON.parse(fileContent);
                 console.log('✅ Файл скачан с диска');
 
@@ -720,24 +709,21 @@
 
                 // === УМНЫЙ МЕРДЖ БЕЗ ДУБЛИРОВАНИЯ ===
                 
-                // 1. Мердж заявок: обновляем существующие, добавляем новые
+                // 1. Мердж заявок
                 const localReqMap = new Map(requests.map(r => [r.id, r]));
                 for (const cr of cloudRequests) {
                     if (localReqMap.has(cr.id)) {
-                        // Заявка уже есть — обновляем, если облачная версия новее
                         const lr = localReqMap.get(cr.id);
                         if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) {
                             Object.assign(lr, cr);
                         }
                     } else {
-                        // Заявки нет — добавляем
                         requests.push(cr);
                     }
                 }
-                // Сортируем по дате
                 requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
 
-                // 2. Мердж объектов: обновляем существующие, добавляем новые
+                // 2. Мердж объектов
                 const localObjMap = new Map(objectsDB.map(o => [o.id, o]));
                 for (const co of cloudObjects) {
                     if (localObjMap.has(co.id)) {
@@ -748,7 +734,7 @@
                     }
                 }
 
-                // 3. Мердж проблем: обновляем существующие, добавляем новые
+                // 3. Мердж проблем
                 const localProbMap = new Map(problemsDB.map(p => [p.id, p]));
                 for (const cp of cloudProblems) {
                     if (localProbMap.has(cp.id)) {
@@ -772,10 +758,10 @@
                 alert('✅ Данные скачаны с Яндекс.Диска!\n' + stats);
             } catch (e) {
                 console.error(e);
-                if (e.message.includes('не найден') || e.message.includes('404')) {
+                if (e.message.includes('404') || e.message.includes('NoSuchResource')) {
                     alert('⚠️ На Яндекс.Диске ещё нет данных.\n\nСначала загрузите данные с первого устройства:\n1. Откройте программу на первом устройстве\n2. Вкладка "Облако"\n3. Нажмите "⬆️ Загрузить на Яндекс.Диск"');
                 } else {
-                    alert('❌ Ошибка скачивания: ' + e.message + '\n\nПроверьте:\n- Подключение к интернету\n- Права доступа приложения на Яндекс.Диске');
+                    alert('❌ Ошибка скачивания: ' + e.message + '\n\nПопробуйте:\n- Обновить страницу (F5)\n- Проверить подключение к интернету\n- Переподключить Яндекс.Диск');
                 }
             } finally {
                 btn.textContent = originalText;
