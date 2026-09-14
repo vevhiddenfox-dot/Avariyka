@@ -40,7 +40,9 @@
         button:disabled { background: #BDBDBD; cursor: not-allowed; }
         .btn-secondary { background: #757575; margin-top: 8px; }
         .btn-success { background: #4CAF50; }
+        .btn-warning { background: #FF9800; }
         .btn-danger { background: #f44336; }
+        .btn-info { background: #00BCD4; }
         .btn-small { padding: 6px 10px; font-size: 13px; width: auto; margin: 0 4px 0 0; }
         .btn-edit { background: #FF9800; }
         
@@ -85,6 +87,10 @@
         .info-box code {
             background: white; padding: 2px 6px; border-radius: 4px;
             font-family: monospace; font-size: 12px;
+        }
+        .sync-info {
+            background: #FFF8E1; padding: 12px; border-radius: 8px;
+            margin-bottom: 16px; font-size: 13px; color: #F57F17; line-height: 1.5;
         }
     </style>
 </head>
@@ -181,13 +187,13 @@
                     <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
                 </div>
                 
-                <button type="submit">💾 Сохранить заявку</button>
+                <button type="submit"> Сохранить заявку</button>
             </form>
         </div>
         
         <!-- Вкладка: База -->
         <div id="dbTab" class="hidden">
-            <h3>🏢 Объекты и адреса</h3>
+            <h3> Объекты и адреса</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newObjName" placeholder="Название объекта (напр. ЖК Лайм)" style="margin-bottom: 8px;">
                 <input type="text" id="newObjAddress" placeholder="Адрес (напр. ул. Староалексеевская 5А)" style="margin-bottom: 8px;">
@@ -196,7 +202,7 @@
             </div>
             <div id="objectsList"></div>
 
-            <h3>⚠️ Виды проблем</h3>
+            <h3>️ Виды проблем</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newProblemName" placeholder="Напр. Застревание людей" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
@@ -225,14 +231,24 @@
                     ✅ <strong>Подключено к Яндекс.Диску</strong><br>
                     Файл: <code>/elevator_data.json</code> (в корне диска)
                 </div>
-                <button onclick="syncNow()" class="btn-success"> Синхронизировать сейчас</button>
+                
+                <div class="sync-info">
+                    <strong>💡 Как пользоваться:</strong><br>
+                    • <strong>⬆️ Загрузить</strong> — отправить данные из программы на Яндекс.Диск<br>
+                    • <strong>⬇️ Скачать</strong> — получить данные с Яндекс.Диска в программу (без дублирования)
+                </div>
+                
+                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить на Яндекс.Диск</button>
+                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">⬇️ Скачать с Яндекс.Диска</button>
                 <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV (Excel)</button>
                 <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
+                
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                    📊 <strong>Статистика:</strong><br>
+                     <strong>Статистика:</strong><br>
                     Всего заявок: <span id="statTotal">0</span><br>
                     Объектов в базе: <span id="statObj">0</span> | Видов проблем: <span id="statProb">0</span><br>
-                    Последняя синхр.: <span id="lastSync">—</span>
+                    Последняя загрузка: <span id="lastUpload">—</span><br>
+                    Последнее скачивание: <span id="lastDownload">—</span>
                 </div>
             </div>
         </div>
@@ -242,7 +258,8 @@
         // === КОНФИГУРАЦИЯ ===
         const YANDEX_TOKEN_KEY = 'yandexToken';
         const CLIENT_ID_KEY = 'yandexClientId';
-        const SYNC_KEY = 'lastSyncTime';
+        const UPLOAD_KEY = 'lastUploadTime';
+        const DOWNLOAD_KEY = 'lastDownloadTime';
         const FILE_PATH = 'disk:/elevator_data.json';
         
         // Загрузка данных из localStorage
@@ -284,7 +301,6 @@
                     window.history.replaceState({}, '', window.location.pathname);
                     updateUI();
                     alert('✅ Яндекс.Диск подключён!');
-                    setTimeout(syncNow, 1000);
                 }
             }
         }
@@ -340,7 +356,7 @@
                         </div>
                         <div class="db-item-actions">
                             <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">️</button>
+                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button>
                         </div>
                     </div>
                 `).join('');
@@ -393,9 +409,7 @@
             document.getElementById('newObjName').value = '';
             document.getElementById('newObjAddress').value = '';
             renderDB();
-            if (yandexToken) setTimeout(syncNow, 500);
         }
-
         function editObject(id) {
             const obj = objectsDB.find(o => o.id === id);
             document.getElementById('newObjName').value = obj.name;
@@ -410,9 +424,9 @@
                 objectsDB = objectsDB.filter(o => o.id !== id);
                 localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
                 renderDB();
-                if (yandexToken) setTimeout(syncNow, 500);
             }
         }
+
         // --- Проблемы ---
         function saveProblem() {
             const name = document.getElementById('newProblemName').value.trim();
@@ -432,7 +446,6 @@
             localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
             document.getElementById('newProblemName').value = '';
             renderDB();
-            if (yandexToken) setTimeout(syncNow, 500);
         }
 
         function editProblem(id) {
@@ -448,7 +461,6 @@
                 problemsDB = problemsDB.filter(p => p.id !== id);
                 localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
                 renderDB();
-                if (yandexToken) setTimeout(syncNow, 500);
             }
         }
 
@@ -490,7 +502,6 @@
             renderRequests();
             
             alert('✅ Заявка сохранена');
-            if (yandexToken) setTimeout(syncNow, 1000);
         });
 
         function renderRequests() {
@@ -544,7 +555,6 @@
             request.updatedAt = new Date().toISOString();
             localStorage.setItem('requests', JSON.stringify(requests));
             renderRequests();
-            if (yandexToken) setTimeout(syncNow, 500);
         }
 
         function deleteRequest(id) {
@@ -552,12 +562,10 @@
                 requests = requests.filter(r => r.id !== id);
                 localStorage.setItem('requests', JSON.stringify(requests));
                 renderRequests();
-                if (yandexToken) setTimeout(syncNow, 500);
             }
         }
 
-        
-        // === ЯНДЕКС.ДИСК API ===
+                // === ЯНДЕКС.ДИСК API ===
         function updateUI() {
             const statusEl = document.getElementById('syncStatus');
             if (yandexToken) {
@@ -614,70 +622,16 @@
             return response;
         }
 
-        // === СИНХРОНИЗАЦИЯ ===
-        async function syncNow() {
+        // === ЗАГРУЗКА НА ЯНДЕКС.ДИСК ===
+        async function uploadToYandex() {
             if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
-            const btn = document.querySelector('#connected .btn-success');
+            
+            const btn = document.getElementById('btnUpload');
             const originalText = btn.textContent;
-            btn.textContent = ' Синхронизация...';
+            btn.textContent = '⏳ Загрузка...';
             btn.disabled = true;
 
             try {
-                // 1. Скачиваем существующий файл (если есть)
-                let cloudData = null;
-                try {
-                    const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
-                    const resp = await yandexFetch(url);
-                    const data = await resp.json();
-                    const fileResp = await fetch(data.href);
-                    const text = await fileResp.text();
-                    cloudData = JSON.parse(text);
-                    console.log('✅ Файл скачан с диска');
-                } catch (e) {
-                    console.log('️ Файл на диске не найден, создадим новый');
-                }
-
-                // 2. Объединяем данные
-                let cloudRequests = [], cloudObjects = [], cloudProblems = [];
-                if (cloudData) {
-                    if (Array.isArray(cloudData)) {
-                        cloudRequests = cloudData;
-                    } else {
-                        cloudRequests = cloudData.requests || [];
-                        cloudObjects = cloudData.objects || [];
-                        cloudProblems = cloudData.problems || [];
-                    }
-                }
-
-                // Мердж заявок
-                const localReqIds = new Set(requests.map(r => r.id));
-                for (const cr of cloudRequests) {
-                    if (!localReqIds.has(cr.id)) requests.push(cr);
-                    else {
-                        const lr = requests.find(r => r.id === cr.id);
-                        if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) Object.assign(lr, cr);
-                    }
-                }
-                requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-
-                // Мердж объектов
-                const localObjIds = new Set(objectsDB.map(o => o.id));
-                for (const co of cloudObjects) {
-                    if (!localObjIds.has(co.id)) objectsDB.push(co);
-                }
-
-                // Мердж проблем
-                const localProbIds = new Set(problemsDB.map(p => p.id));
-                for (const cp of cloudProblems) {
-                    if (!localProbIds.has(cp.id)) problemsDB.push(cp);
-                }
-
-                // Сохраняем локально
-                localStorage.setItem('requests', JSON.stringify(requests));
-                localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-                localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-
-                // 3. Загружаем файл на диск
                 const uploadUrl = `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${encodeURIComponent(FILE_PATH)}&overwrite=true`;
                 const resp = await yandexFetch(uploadUrl);
                 const data = await resp.json();
@@ -695,13 +649,108 @@
                     throw new Error(`Ошибка загрузки файла: ${uploadResp.status}`);
                 }
 
-                localStorage.setItem(SYNC_KEY, new Date().toISOString());
-                updateUI();
-                renderRequests();
-                alert('✅ Синхронизация завершена!');
+                localStorage.setItem(UPLOAD_KEY, new Date().toISOString());
+                updateStats();
+                alert('✅ Данные загружены на Яндекс.Диск!');
             } catch (e) {
                 console.error(e);
-                alert('❌ Ошибка синхронизации: ' + e.message);
+                alert('❌ Ошибка загрузки: ' + e.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // === СКАЧИВАНИЕ С ЯНДЕКС.ДИСКА ===
+        async function downloadFromYandex() {
+            if (!yandexToken) { alert('❌ Сначала подключите Яндекс.Диск'); return; }
+            
+            const btn = document.getElementById('btnDownload');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Скачивание...';
+            btn.disabled = true;
+
+            try {
+                // Скачиваем файл
+                const url = `https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`;
+                const resp = await yandexFetch(url);
+                const data = await resp.json();
+                const fileResp = await fetch(data.href);
+                const text = await fileResp.text();
+                const cloudData = JSON.parse(text);
+                
+                console.log('✅ Файл скачан с диска');
+
+                let cloudRequests = [], cloudObjects = [], cloudProblems = [];
+                if (cloudData) {
+                    if (Array.isArray(cloudData)) {
+                        cloudRequests = cloudData;
+                    } else {
+                        cloudRequests = cloudData.requests || [];
+                        cloudObjects = cloudData.objects || [];
+                        cloudProblems = cloudData.problems || [];
+                    }
+                }
+
+                // === УМНЫЙ МЕРДЖ БЕЗ ДУБЛИРОВАНИЯ ===
+                
+                // 1. Мердж заявок: обновляем существующие, добавляем новые
+                const localReqMap = new Map(requests.map(r => [r.id, r]));
+                for (const cr of cloudRequests) {
+                    if (localReqMap.has(cr.id)) {
+                        // Заявка уже есть — обновляем, если облачная версия новее
+                        const lr = localReqMap.get(cr.id);
+                        if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) {
+                            Object.assign(lr, cr);
+                        }
+                    } else {
+                        // Заявки нет — добавляем
+                        requests.push(cr);
+                    }
+                }
+                // Сортируем по дате
+                requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+                // 2. Мердж объектов: обновляем существующие, добавляем новые
+                const localObjMap = new Map(objectsDB.map(o => [o.id, o]));
+                for (const co of cloudObjects) {
+                    if (localObjMap.has(co.id)) {
+                        const lo = localObjMap.get(co.id);
+                        Object.assign(lo, co);
+                    } else {
+                        objectsDB.push(co);
+                    }
+                }
+
+                // 3. Мердж проблем: обновляем существующие, добавляем новые
+                const localProbMap = new Map(problemsDB.map(p => [p.id, p]));
+                for (const cp of cloudProblems) {
+                    if (localProbMap.has(cp.id)) {
+                        const lp = localProbMap.get(cp.id);
+                        Object.assign(lp, cp);
+                    } else {
+                        problemsDB.push(cp);
+                    }
+                }
+
+                // Сохраняем локально
+                localStorage.setItem('requests', JSON.stringify(requests));
+                localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
+                localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
+
+                localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
+                updateUI();
+                renderRequests();
+                
+                const stats = `Заявок: ${requests.length}, Объектов: ${objectsDB.length}, Проблем: ${problemsDB.length}`;
+                alert('✅ Данные скачаны с Яндекс.Диска!\n' + stats);
+            } catch (e) {
+                console.error(e);
+                if (e.message.includes('404') || e.message.includes('NoSuchResource')) {
+                    alert('️ На Яндекс.Диске ещё нет данных. Сначала загрузите данные с этого устройства.');
+                } else {
+                    alert('❌ Ошибка скачивания: ' + e.message);
+                }
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
@@ -712,8 +761,12 @@
             document.getElementById('statTotal').textContent = requests.length;
             document.getElementById('statObj').textContent = objectsDB.length;
             document.getElementById('statProb').textContent = problemsDB.length;
-            const lastSync = localStorage.getItem(SYNC_KEY);
-            document.getElementById('lastSync').textContent = lastSync ? new Date(lastSync).toLocaleString('ru-RU') : '—';
+            
+            const lastUpload = localStorage.getItem(UPLOAD_KEY);
+            document.getElementById('lastUpload').textContent = lastUpload ? new Date(lastUpload).toLocaleString('ru-RU') : '—';
+            
+            const lastDownload = localStorage.getItem(DOWNLOAD_KEY);
+            document.getElementById('lastDownload').textContent = lastDownload ? new Date(lastDownload).toLocaleString('ru-RU') : '—';
         }
 
         function exportToCSV() {
