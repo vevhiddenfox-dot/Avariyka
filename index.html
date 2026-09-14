@@ -88,7 +88,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🛗 Аварийные заявки</h1>
+        <h1> Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
         
         <div class="tabs">
@@ -165,7 +165,7 @@
                     <label>Комментарий</label>
                     <textarea id="comment"></textarea>
                 </div>
-                <button type="submit">💾 Сохранить</button>
+                <button type="submit"> Сохранить</button>
             </form>
         </div>
         
@@ -178,7 +178,7 @@
                 <button onclick="saveObject()" id="saveObjBtn">➕ Добавить</button>
             </div>
             <div id="objectsList"></div>
-            <h3>️ Проблемы</h3>
+            <h3>⚠️ Проблемы</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
                 <input type="text" id="newProblemName" placeholder="Название" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
@@ -208,11 +208,11 @@
                 </div>
                 <div class="sync-info">
                     <strong>💡 Синхронизация:</strong><br>
-                    ⬆️ Загрузить — отправить на Яндекс.Диск<br>
-                    ⬇️ Скачать — получить с Яндекс.Диска
+                    ⬆️ Загрузить — отправить данные на Яндекс.Диск<br>
+                    ⬇️ Скачать — получить данные с Яндекс.Диска (заменяет локальные)
                 </div>
                 <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить</button>
-                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">️ Скачать</button>
+                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">⬇️ Скачать</button>
                 <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON</button>
                 <button onclick="importManual()" class="btn-warning">📥 Импорт JSON</button>
                 <button onclick="exportToCSV()" class="btn-secondary">📥 CSV</button>
@@ -463,7 +463,7 @@
                             <span class="status-badge status-${r.status}">${statusText}</span>
                         </div>
                         <div class="request-info">
-                            ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
+                            ${r.objectName ? `<strong> ${r.objectName}</strong><br>` : ''}
                             <strong>📍 ${r.address}</strong><br>
                             Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
                             <strong>Проблема:</strong> ${r.issue || 'Не указана'}
@@ -660,37 +660,38 @@
                 cloudProblems = cloudData.problems || [];
             }
 
-            // Мердж заявок без дублирования
-            const reqMap = new Map(requests.map(r => [r.id, r]));
-            for (const cr of cloudRequests) {
-                if (reqMap.has(cr.id)) {
-                    const lr = reqMap.get(cr.id);
-                    if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) Object.assign(lr, cr);
-                } else {
-                    requests.push(cr);
-                }
-            }
-            requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-
-            // Мердж объектов
-            const objMap = new Map(objectsDB.map(o => [o.id, o]));
-            for (const co of cloudObjects) {
-                if (!objMap.has(co.id)) objectsDB.push(co);
-            }
-
-            // Мердж проблем
-            const probMap = new Map(problemsDB.map(p => [p.id, p]));
-            for (const cp of cloudProblems) {
-                if (!probMap.has(cp.id)) problemsDB.push(cp);
+            // Показываем пользователю, что будет заменено
+            const confirmMsg = `Найдено данных на Яндекс.Диске:\n` +
+                `• Заявок: ${cloudRequests.length}\n` +
+                `• Объектов: ${cloudObjects.length}\n` +
+                `• Проблем: ${cloudProblems.length}\n\n` +
+                `Локально у вас сейчас:\n` +
+                `• Заявок: ${requests.length}\n` +
+                `• Объектов: ${objectsDB.length}\n` +
+                `• Проблем: ${problemsDB.length}\n\n` +
+                `Заменить локальные данные облачными?\n` +
+                `(Все изменения будут синхронизированы)`;
+            
+            if (!confirm(confirmMsg)) {
+                alert('Скачивание отменено');
+                return;
             }
 
+            // Полностью заменяем локальные данные облачными
+            requests = cloudRequests;
+            objectsDB = cloudObjects;
+            problemsDB = cloudProblems;
+
+            // Сохраняем
             localStorage.setItem('requests', JSON.stringify(requests));
             localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
             localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
             localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
+            
             updateUI();
             renderRequests();
-            alert(`✅ Скачано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}\nПроблем: ${problemsDB.length}`);
+            
+            alert(`✅ Данные синхронизированы!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}\nПроблем: ${problemsDB.length}`);
         }
 
         function exportManual() {
@@ -713,25 +714,12 @@
                 reader.onload = function(event) {
                     try {
                         const data = JSON.parse(event.target.result);
-                        const reqMap = new Map(requests.map(r => [r.id, r]));
-                        if (data.requests) {
-                            for (const cr of data.requests) {
-                                if (!reqMap.has(cr.id)) requests.push(cr);
-                            }
-                            requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-                        }
-                        const objMap = new Map(objectsDB.map(o => [o.id, o]));
-                        if (data.objects) {
-                            for (const co of data.objects) {
-                                if (!objMap.has(co.id)) objectsDB.push(co);
-                            }
-                        }
-                        const probMap = new Map(problemsDB.map(p => [p.id, p]));
-                        if (data.problems) {
-                            for (const cp of data.problems) {
-                                if (!probMap.has(cp.id)) problemsDB.push(cp);
-                            }
-                        }
+                        
+                        // Полная замена данных (как при скачивании с облака)
+                        if (data.requests) requests = data.requests;
+                        if (data.objects) objectsDB = data.objects;
+                        if (data.problems) problemsDB = data.problems;
+                        
                         localStorage.setItem('requests', JSON.stringify(requests));
                         localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
                         localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
