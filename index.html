@@ -235,7 +235,7 @@
                 <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить на Яндекс.Диск</button>
                 <button onclick="importManual()" class="btn-warning">📥 Импорт JSON (после скачивания с диска)</button>
                 <button onclick="exportManual()" class="btn-secondary">📤 Экспорт JSON (резервная копия)</button>
-                <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV</button>
+                <button onclick="exportToCSV()" class="btn-secondary"> Экспорт в CSV (Excel)</button>
                 <button onclick="disconnect()" class="btn-danger"> Отключить Яндекс.Диск</button>
                 
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
@@ -631,16 +631,53 @@
             document.getElementById('lastUpload').textContent = localStorage.getItem(UPLOAD_KEY) ? new Date(localStorage.getItem(UPLOAD_KEY)).toLocaleString('ru-RU') : '—';
         }
 
+        // === ИСПРАВЛЕННЫЙ ЭКСПОРТ В CSV ===
         function exportToCSV() {
-            const headers = ['Дата', 'Объект', 'Адрес', 'Подъезд', 'Секция', 'Лифт', 'Этаж', 'Проблема', 'Статус', 'Комментарий'];
+            if (requests.length === 0) {
+                alert('Нет заявок для экспорта');
+                return;
+            }
+            
             const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'};
-            const rows = requests.map(r => [new Date(r.dateTime).toLocaleString('ru-RU'), r.objectName || '', r.address, r.entrance, r.section || '', r.elevator || '', r.floor || '', r.issue || '', statusMap[r.status], r.comment || '']);
-            const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            
+            // Заголовки столбцов
+            const headers = ['Дата', 'Объект', 'Адрес', 'Подъезд', 'Секция', 'Лифт', 'Этаж', 'Проблема', 'Статус', 'Комментарий'];
+            
+            // Данные
+            const rows = requests.map(r => [
+                new Date(r.dateTime).toLocaleString('ru-RU'),
+                r.objectName || '',
+                r.address || '',
+                r.entrance || '',
+                r.section || '',
+                r.elevator || '',
+                r.floor || '',
+                r.issue || '',
+                statusMap[r.status] || '',
+                r.comment || ''
+            ]);
+            
+            // Создаем CSV с разделителем точка с запятой (для русского Excel)
+            const csvContent = [
+                headers.join(';'),
+                ...rows.map(row => row.map(cell => {
+                    const escaped = String(cell).replace(/"/g, '""');
+                    return `"${escaped}"`;
+                }).join(';'))
+            ].join('\r\n');
+            
+            // BOM для корректного отображения кириллицы в Excel
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+            
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.csv`;
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `zayavki_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
 
         updateUI();
