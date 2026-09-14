@@ -6,33 +6,19 @@
     <title>Аварийные заявки - Лифты</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5; padding: 16px; padding-bottom: 80px;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; padding: 16px; padding-bottom: 80px; }
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
         h3 { font-size: 16px; margin: 20px 0 10px 0; color: #555; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
         .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab {
-            flex: 1; min-width: 80px; padding: 10px 8px; background: white;
-            border: 2px solid #ddd; border-radius: 8px;
-            text-align: center; cursor: pointer; font-weight: 600; font-size: 13px;
-        }
+        .tab { flex: 1; min-width: 80px; padding: 10px 8px; background: white; border: 2px solid #ddd; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600; font-size: 13px; }
         .tab.active { background: #2196F3; color: white; border-color: #2196F3; }
         .form-group { margin-bottom: 14px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; font-size: 14px; }
-        input, select, textarea {
-            width: 100%; padding: 12px; border: 2px solid #ddd;
-            border-radius: 8px; font-size: 16px; font-family: inherit;
-        }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; font-family: inherit; }
         input[required], select[required], textarea[required] { border-left: 4px solid #f44336; }
         textarea { resize: vertical; min-height: 70px; }
-        button {
-            width: 100%; padding: 14px; background: #2196F3; color: white;
-            border: none; border-radius: 8px; font-size: 16px;
-            font-weight: 600; cursor: pointer; margin-top: 8px;
-        }
+        button { width: 100%; padding: 14px; background: #2196F3; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
         button:active { background: #1976D2; }
         button:disabled { background: #BDBDBD; cursor: not-allowed; }
         .btn-secondary { background: #757575; margin-top: 8px; }
@@ -42,10 +28,7 @@
         .btn-info { background: #00BCD4; }
         .btn-small { padding: 6px 10px; font-size: 13px; width: auto; margin: 0 4px 0 0; }
         .btn-edit { background: #FF9800; }
-        .request-card {
-            background: white; padding: 14px; border-radius: 12px;
-            margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .request-card { background: white; padding: 14px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .request-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .request-date { font-size: 12px; color: #999; }
         .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
@@ -63,41 +46,26 @@
         .sync-status { padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; text-align: center; }
         .sync-ok { background: #E8F5E9; color: #2E7D32; }
         .sync-off { background: #FFF3E0; color: #E65100; }
-        .db-item {
-            background: white; padding: 12px; border-radius: 8px;
-            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid #2196F3;
-        }
+        .db-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2196F3; }
         .db-item-info { flex: 1; }
         .db-item-title { font-weight: 600; font-size: 15px; }
         .db-item-sub { font-size: 13px; color: #666; margin-top: 4px; }
         .db-item-actions { display: flex; gap: 4px; }
-        .info-box {
-            background: #E3F2FD; padding: 12px; border-radius: 8px;
-            margin-bottom: 16px; font-size: 13px; color: #1565C0; line-height: 1.5;
-        }
-        .info-box code {
-            background: white; padding: 2px 6px; border-radius: 4px;
-            font-family: monospace; font-size: 12px;
-        }
-        .sync-info {
-            background: #FFF8E1; padding: 12px; border-radius: 8px;
-            margin-bottom: 16px; font-size: 13px; color: #F57F17; line-height: 1.5;
-        }
+        .info-box { background: #E3F2FD; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; color: #1565C0; line-height: 1.5; }
+        .info-box code { background: white; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+        .sync-info { background: #FFF8E1; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; color: #F57F17; line-height: 1.5; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🛗 Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
-        
         <div class="tabs">
             <div class="tab active" data-tab="list">Список</div>
             <div class="tab" data-tab="add">+ Новая</div>
             <div class="tab" data-tab="db">База</div>
             <div class="tab" data-tab="sync">☁️ Облако</div>
         </div>
-        
         <div id="listTab">
             <div class="filter-bar">
                 <select id="filterStatus" onchange="renderRequests()">
@@ -107,68 +75,25 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
+            <input type="text" id="searchInput" placeholder=" Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
-        
         <div id="addTab" class="hidden">
             <form id="requestForm">
-                <div class="form-group">
-                    <label>Дата и время *</label>
-                    <input type="datetime-local" id="dateTime" required>
-                </div>
-                <div class="form-group">
-                    <label>Объект *</label>
-                    <select id="objectSelect" onchange="autoFillAddress()" required>
-                        <option value="">-- Выберите --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Адрес *</label>
-                    <input type="text" id="address" required>
-                </div>
-                <div class="form-group">
-                    <label>Подъезд *</label>
-                    <input type="text" id="entrance" required>
-                </div>
-                <div class="form-group">
-                    <label>Секция</label>
-                    <input type="text" id="section">
-                </div>
-                <div class="form-group">
-                    <label>Лифт</label>
-                    <input type="text" id="elevator">
-                </div>
-                <div class="form-group">
-                    <label>Этаж</label>
-                    <input type="text" id="floor">
-                </div>
-                <div class="form-group">
-                    <label>Вид проблемы</label>
-                    <select id="problemSelect" onchange="autoFillIssue()">
-                        <option value="">-- Выберите --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Описание</label>
-                    <textarea id="issue"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Статус *</label>
-                    <select id="status" required>
-                        <option value="new">Новая</option>
-                        <option value="progress">В работе</option>
-                        <option value="done">Выполнена</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Комментарий</label>
-                    <textarea id="comment"></textarea>
-                </div>
+                <div class="form-group"><label>Дата и время *</label><input type="datetime-local" id="dateTime" required></div>
+                <div class="form-group"><label>Объект *</label><select id="objectSelect" onchange="autoFillAddress()" required><option value="">-- Выберите --</option></select></div>
+                <div class="form-group"><label>Адрес *</label><input type="text" id="address" required></div>
+                <div class="form-group"><label>Подъезд *</label><input type="text" id="entrance" required></div>
+                <div class="form-group"><label>Секция</label><input type="text" id="section"></div>
+                <div class="form-group"><label>Лифт</label><input type="text" id="elevator"></div>
+                <div class="form-group"><label>Этаж</label><input type="text" id="floor"></div>
+                <div class="form-group"><label>Вид проблемы</label><select id="problemSelect" onchange="autoFillIssue()"><option value="">-- Выберите --</option></select></div>
+                <div class="form-group"><label>Описание</label><textarea id="issue"></textarea></div>
+                <div class="form-group"><label>Статус *</label><select id="status" required><option value="new">Новая</option><option value="progress">В работе</option><option value="done">Выполнена</option></select></div>
+                <div class="form-group"><label>Комментарий</label><textarea id="comment"></textarea></div>
                 <button type="submit">💾 Сохранить</button>
             </form>
         </div>
-        
         <div id="dbTab" class="hidden">
             <h3>🏢 Объекты</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
@@ -186,542 +111,73 @@
             </div>
             <div id="problemsList"></div>
         </div>
-        
         <div id="syncTab" class="hidden">
             <div id="notConnected">
-                <div class="info-box">
-                    <strong>🔑 Подключение:</strong><br>
-                    Введите Client ID и нажмите "Войти".
-                </div>
-                <div class="form-group">
-                    <label>Client ID</label>
-                    <input type="text" id="clientIdInput">
-                </div>
+                <div class="info-box"><strong> Подключение:</strong><br>Введите Client ID и нажмите "Войти".</div>
+                <div class="form-group"><label>Client ID</label><input type="text" id="clientIdInput"></div>
                 <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить</button>
-                <button onclick="startOAuth()">🔐 Войти</button>
+                <button onclick="startOAuth()"> Войти</button>
             </div>
-            
             <div id="connected" class="hidden">
-                <div class="info-box">
-                    ✅ <strong>Подключено</strong><br>
-                    Файл: <code>/elevator_data.json</code>
-                </div>
-                <div class="sync-info">
-                    <strong>💡 Синхронизация:</strong><br>
-                    ⬆️ Загрузить — отправить на Яндекс.Диск<br>
-                    ⬇️ Скачать — получить с Яндекс.Диска
-                </div>
-                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить</button>
+                <div class="info-box">✅ <strong>Подключено</strong><br>Файл: <code>/elevator_data.json</code></div>
+                <div class="sync-info"><strong>💡 Синхронизация:</strong><br>⬆️ Загрузить — отправить на Яндекс.Диск<br>⬇️ Скачать — получить с Яндекс.Диска</div>
+                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">️ Загрузить</button>
                 <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">⬇️ Скачать</button>
                 <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON</button>
                 <button onclick="importManual()" class="btn-warning">📥 Импорт JSON</button>
                 <button onclick="exportToCSV()" class="btn-secondary">📥 CSV</button>
-                <button onclick="disconnect()" class="btn-danger"> Отключить</button>
+                <button onclick="disconnect()" class="btn-danger">🚪 Отключить</button>
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                    📊 <strong>Статистика:</strong><br>
-                    Заявок: <span id="statTotal">0</span><br>
-                    Объектов: <span id="statObj">0</span> | Проблем: <span id="statProb">0</span><br>
-                    Загрузка: <span id="lastUpload">—</span><br>
-                    Скачивание: <span id="lastDownload">—</span>
+                     <strong>Статистика:</strong><br>Заявок: <span id="statTotal">0</span><br>Объектов: <span id="statObj">0</span> | Проблем: <span id="statProb">0</span><br>Загрузка: <span id="lastUpload">—</span><br>Скачивание: <span id="lastDownload">—</span>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
         const YANDEX_TOKEN_KEY = 'yandexToken';
         const CLIENT_ID_KEY = 'yandexClientId';
         const UPLOAD_KEY = 'lastUploadTime';
         const DOWNLOAD_KEY = 'lastDownloadTime';
         const FILE_PATH = 'disk:/elevator_data.json';
-        
         let requests = JSON.parse(localStorage.getItem('requests') || '[]');
         let objectsDB = JSON.parse(localStorage.getItem('objectsDB') || '[]');
         let problemsDB = JSON.parse(localStorage.getItem('problemsDB') || '[]');
         let yandexToken = localStorage.getItem(YANDEX_TOKEN_KEY) || '';
         let YANDEX_CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || '';
-
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('dateTime').value = now.toISOString().slice(0, 16);
-
-        if (objectsDB.length === 0) {
-            objectsDB = [{ id: Date.now(), name: 'ЖК Лайм', address: 'ул. Староалексеевская 5А' }];
-            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-        }
-        if (problemsDB.length === 0) {
-            problemsDB = [
-                { id: Date.now()+1, name: 'Застревание людей' },
-                { id: Date.now()+2, name: 'Лифт не едет' },
-                { id: Date.now()+3, name: 'Не закрываются двери' },
-                { id: Date.now()+4, name: 'Нужен перезапуск' }
-            ];
-            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-        }
-
-        function handleOAuthRedirect() {
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token')) {
-                const params = new URLSearchParams(hash.substring(1));
-                const token = params.get('access_token');
-                if (token) {
-                    yandexToken = token;
-                    localStorage.setItem(YANDEX_TOKEN_KEY, token);
-                    window.history.replaceState({}, '', window.location.pathname);
-                    updateUI();
-                    alert('✅ Подключено!');
-                }
-            }
-        }
+        if (objectsDB.length === 0) { objectsDB = [{ id: Date.now(), name: 'ЖК Лайм', address: 'ул. Староалексеевская 5А' }]; localStorage.setItem('objectsDB', JSON.stringify(objectsDB)); }
+        if (problemsDB.length === 0) { problemsDB = [{ id: Date.now()+1, name: 'Застревание людей' }, { id: Date.now()+2, name: 'Лифт не едет' }, { id: Date.now()+3, name: 'Не закрываются двери' }, { id: Date.now()+4, name: 'Нужен перезапуск' }]; localStorage.setItem('problemsDB', JSON.stringify(problemsDB)); }
+        function handleOAuthRedirect() { const hash = window.location.hash; if (hash && hash.includes('access_token')) { const params = new URLSearchParams(hash.substring(1)); const token = params.get('access_token'); if (token) { yandexToken = token; localStorage.setItem(YANDEX_TOKEN_KEY, token); window.history.replaceState({}, '', window.location.pathname); updateUI(); alert('✅ Подключено!'); } } }
         handleOAuthRedirect();
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const tabName = this.getAttribute('data-tab');
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                ['listTab', 'addTab', 'dbTab', 'syncTab'].forEach(id => document.getElementById(id).classList.add('hidden'));
-                document.getElementById(tabName + 'Tab').classList.remove('hidden');
-                if (tabName === 'list') renderRequests();
-                if (tabName === 'add') updateFormDropdowns();
-                if (tabName === 'db') renderDB();
-                if (tabName === 'sync') updateStats();
-            });
-        });
-
-        function renderDB() {
-            document.getElementById('objectsList').innerHTML = objectsDB.length === 0 ? 
-                '<div class="empty-state">Нет объектов</div>' :
-                objectsDB.map(obj => `
-                    <div class="db-item">
-                        <div class="db-item-info">
-                            <div class="db-item-title">${obj.name}</div>
-                            <div class="db-item-sub">${obj.address}</div>
-                        </div>
-                        <div class="db-item-actions">
-                            <button class="btn-small btn-edit" onclick="editObject(${obj.id})">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteObject(${obj.id})">🗑️</button>
-                        </div>
-                    </div>
-                `).join('');
-            
-            document.getElementById('problemsList').innerHTML = problemsDB.length === 0 ?
-                '<div class="empty-state">Нет проблем</div>' :
-                problemsDB.map(prob => `
-                    <div class="db-item" style="border-left-color: #FF9800;">
-                        <div class="db-item-info"><div class="db-item-title">${prob.name}</div></div>
-                        <div class="db-item-actions">
-                            <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">️</button>
-                        </div>
-                    </div>
-                `).join('');
-        }
-
-        function updateFormDropdowns() {
-            document.getElementById('objectSelect').innerHTML = '<option value="">-- Выберите --</option>' + 
-                objectsDB.map(obj => `<option value="${obj.id}" data-address="${obj.address}">${obj.name}</option>`).join('');
-            document.getElementById('problemSelect').innerHTML = '<option value="">-- Выберите --</option>' + 
-                problemsDB.map(prob => `<option value="${prob.name}">${prob.name}</option>`).join('');
-        }
-
-        function autoFillAddress() {
-            const select = document.getElementById('objectSelect');
-            const selected = select.options[select.selectedIndex];
-            if (selected.getAttribute('data-address')) {
-                document.getElementById('address').value = selected.getAttribute('data-address');
-            }
-        }
-
-        function autoFillIssue() {
-            const val = document.getElementById('problemSelect').value;
-            if (val) document.getElementById('issue').value = val;
-        }
-
-        function saveObject() {
-            const name = document.getElementById('newObjName').value.trim();
-            const address = document.getElementById('newObjAddress').value.trim();
-            const editId = document.getElementById('editObjId').value;
-            if (!name || !address) { alert('Заполните поля'); return; }
-            if (editId) {
-                const obj = objectsDB.find(o => o.id == editId);
-                obj.name = name; obj.address = address;
-                document.getElementById('editObjId').value = '';
-                document.getElementById('saveObjBtn').textContent = '➕ Добавить';
-            } else {
-                objectsDB.push({ id: Date.now(), name, address });
-            }
-            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-            document.getElementById('newObjName').value = '';
-            document.getElementById('newObjAddress').value = '';
-            renderDB();
-        }
-
-        function editObject(id) {
-            const obj = objectsDB.find(o => o.id === id);
-            document.getElementById('newObjName').value = obj.name;
-            document.getElementById('newObjAddress').value = obj.address;
-            document.getElementById('editObjId').value = id;
-            document.getElementById('saveObjBtn').textContent = ' Сохранить';
-        }
-
-        function deleteObject(id) {
-            if (confirm('Удалить?')) {
-                objectsDB = objectsDB.filter(o => o.id !== id);
-                localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-                renderDB();
-            }
-        }
-
-        function saveProblem() {
-            const name = document.getElementById('newProblemName').value.trim();
-            const editId = document.getElementById('editProblemId').value;
-            if (!name) { alert('Введите название'); return; }
-            if (editId) {
-                const prob = problemsDB.find(p => p.id == editId);
-                prob.name = name;
-                document.getElementById('editProblemId').value = '';
-                document.getElementById('saveProbBtn').textContent = '➕ Добавить';
-            } else {
-                problemsDB.push({ id: Date.now(), name });
-            }
-            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-            document.getElementById('newProblemName').value = '';
-            renderDB();
-        }
-
-        function editProblem(id) {
-            const prob = problemsDB.find(p => p.id === id);
-            document.getElementById('newProblemName').value = prob.name;
-            document.getElementById('editProblemId').value = id;
-            document.getElementById('saveProbBtn').textContent = '💾 Сохранить';
-        }
-
-        function deleteProblem(id) {
-            if (confirm('Удалить?')) {
-                problemsDB = problemsDB.filter(p => p.id !== id);
-                localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-                renderDB();
-            }
-        }
-
-        document.getElementById('requestForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const objSelect = document.getElementById('objectSelect');
-            const objName = objSelect.options[objSelect.selectedIndex].text;
-            const request = {
-                id: Date.now(),
-                dateTime: document.getElementById('dateTime').value,
-                objectName: objName !== '-- Выберите --' ? objName : '',
-                address: document.getElementById('address').value,
-                entrance: document.getElementById('entrance').value,
-                section: document.getElementById('section').value,
-                elevator: document.getElementById('elevator').value,
-                floor: document.getElementById('floor').value,
-                issue: document.getElementById('issue').value,
-                status: document.getElementById('status').value,
-                comment: document.getElementById('comment').value,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            requests.unshift(request);
-            localStorage.setItem('requests', JSON.stringify(requests));
-            this.reset();
-            const now2 = new Date();
-            now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
-            document.getElementById('dateTime').value = now2.toISOString().slice(0, 16);
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('[data-tab="list"]').classList.add('active');
-            document.getElementById('addTab').classList.add('hidden');
-            document.getElementById('listTab').classList.remove('hidden');
-            renderRequests();
-            alert('✅ Сохранено');
-        });
-
-        function renderRequests() {
-            const filter = document.getElementById('filterStatus').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = requests.filter(r => {
-                const matchStatus = filter === 'all' || r.status === filter;
-                const matchSearch = !search || (r.address && r.address.toLowerCase().includes(search)) ||
-                    (r.elevator && r.elevator.toLowerCase().includes(search)) ||
-                    (r.objectName && r.objectName.toLowerCase().includes(search));
-                return matchStatus && matchSearch;
-            });
-            const container = document.getElementById('requestsList');
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="empty-state">Нет заявок</div>';
-                return;
-            }
-            container.innerHTML = filtered.map(r => {
-                const date = new Date(r.dateTime).toLocaleString('ru-RU');
-                const statusText = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}[r.status];
-                return `
-                    <div class="request-card">
-                        <div class="request-header">
-                            <span class="request-date">${date}</span>
-                            <span class="status-badge status-${r.status}">${statusText}</span>
-                        </div>
-                        <div class="request-info">
-                            ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
-                            <strong> ${r.address}</strong><br>
-                            Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
-                            <strong>Проблема:</strong> ${r.issue || 'Не указана'}
-                            ${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}
-                        </div>
-                        <div class="request-actions">
-                            <button onclick="changeStatus(${r.id})">Статус</button>
-                            <button onclick="deleteRequest(${r.id})" class="btn-danger">Удалить</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function changeStatus(id) {
-            const request = requests.find(r => r.id === id);
-            const statuses = ['new', 'progress', 'done'];
-            const idx = statuses.indexOf(request.status);
-            request.status = statuses[(idx + 1) % statuses.length];
-            request.updatedAt = new Date().toISOString();
-            localStorage.setItem('requests', JSON.stringify(requests));
-            renderRequests();
-        }
-
-        function deleteRequest(id) {
-            if (confirm('Удалить?')) {
-                requests = requests.filter(r => r.id !== id);
-                localStorage.setItem('requests', JSON.stringify(requests));
-                renderRequests();
-            }
-        }
-
-        function updateUI() {
-            const statusEl = document.getElementById('syncStatus');
-            if (yandexToken) {
-                statusEl.className = 'sync-status sync-ok';
-                statusEl.textContent = '☁️ Подключено';
-                document.getElementById('notConnected').classList.add('hidden');
-                document.getElementById('connected').classList.remove('hidden');
-                document.getElementById('clientIdInput').value = YANDEX_CLIENT_ID;
-            } else {
-                statusEl.className = 'sync-status sync-off';
-                statusEl.textContent = '️ Не подключено';
-                document.getElementById('notConnected').classList.remove('hidden');
-                document.getElementById('connected').classList.add('hidden');
-            }
-            updateStats();
-        }
-
-        function saveClientId() {
-            YANDEX_CLIENT_ID = document.getElementById('clientIdInput').value.trim();
-            if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; }
-            localStorage.setItem(CLIENT_ID_KEY, YANDEX_CLIENT_ID);
-            alert('✅ Сохранено');
-        }
-
-        function startOAuth() {
-            if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; }
-            const redirectUri = window.location.origin + window.location.pathname;
-            window.location.href = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-        }
-
-        function disconnect() {
-            if (confirm('Отключить?')) {
-                localStorage.removeItem(YANDEX_TOKEN_KEY);
-                yandexToken = '';
-                updateUI();
-            }
-        }
-
-        async function uploadToYandex() {
-            if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; }
-            const btn = document.getElementById('btnUpload');
-            const original = btn.textContent;
-            btn.textContent = ' Загрузка...';
-            btn.disabled = true;
-            try {
-                const uploadUrl = `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${encodeURIComponent(FILE_PATH)}&overwrite=true`;
-                const resp = await fetch(uploadUrl, {
-                    headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' }
-                });
-                if (!resp.ok) throw new Error(`Ошибка: ${resp.status}`);
-                const data = await resp.json();
-                const payload = { requests, objects: objectsDB, problems: problemsDB, lastSync: new Date().toISOString() };
-                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-                const uploadResp = await fetch(data.href, { method: 'PUT', body: blob });
-                if (!uploadResp.ok) throw new Error(`HTTP ${uploadResp.status}`);
-                localStorage.setItem(UPLOAD_KEY, new Date().toISOString());
-                updateStats();
-                alert('✅ Загружено!');
-            } catch (e) {
-                alert('❌ Ошибка: ' + e.message);
-            } finally {
-                btn.textContent = original;
-                btn.disabled = false;
-            }
-        }
-
-        async function downloadFromYandex() {
-            if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; }
-            const btn = document.getElementById('btnDownload');
-            const original = btn.textContent;
-            btn.textContent = '⏳ Скачивание...';
-            btn.disabled = true;
-            try {
-                // Проверяем файл
-                const checkResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`, {
-                    headers: { 'Authorization': `OAuth ${yandexToken}` }
-                });
-                if (!checkResp.ok) {
-                    if (checkResp.status === 404) throw new Error('FILE_NOT_FOUND');
-                    throw new Error(`Ошибка: ${checkResp.status}`);
-                }
-
-                // Получаем ссылку
-                const urlResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`, {
-                    headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' }
-                });
-                if (!urlResp.ok) throw new Error(`Ошибка: ${urlResp.status}`);
-                const urlData = await urlResp.json();
-                
-                // Скачиваем через прокси для обхода CORS
-                const corsProxy = 'https://api.allorigins.win/raw?url=';
-                const fileResp = await fetch(corsProxy + encodeURIComponent(urlData.href));
-                if (!fileResp.ok) throw new Error(`HTTP ${fileResp.status}`);
-                const text = await fileResp.text();
-                const cloudData = JSON.parse(text);
-                
-                processCloudData(cloudData);
-            } catch (e) {
-                if (e.message === 'FILE_NOT_FOUND' || e.message.includes('404')) {
-                    alert('️ Файл не найден.\n\nСначала загрузите данные:\n1. Откройте на первом устройстве\n2. Нажмите "⬆️ Загрузить"');
-                } else {
-                    console.error(e);
-                    alert('⚠️ Автоматическое скачивание недоступно.\n\nИспользуйте ручной метод:\n1. Нажмите "📤 Экспорт JSON" на первом устройстве\n2. Загрузите файл на Яндекс.Диск\n3. Скачайте файл на этом устройстве\n4. Нажмите "📥 Импорт JSON"');
-                }
-            } finally {
-                btn.textContent = original;
-                btn.disabled = false;
-            }
-        }
-
-        function processCloudData(cloudData) {
-            let cloudRequests = [], cloudObjects = [], cloudProblems = [];
-            if (Array.isArray(cloudData)) {
-                cloudRequests = cloudData;
-            } else {
-                cloudRequests = cloudData.requests || [];
-                cloudObjects = cloudData.objects || [];
-                cloudProblems = cloudData.problems || [];
-            }
-
-            const reqMap = new Map(requests.map(r => [r.id, r]));
-            for (const cr of cloudRequests) {
-                if (reqMap.has(cr.id)) {
-                    const lr = reqMap.get(cr.id);
-                    if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) Object.assign(lr, cr);
-                } else {
-                    requests.push(cr);
-                }
-            }
-            requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-
-            const objMap = new Map(objectsDB.map(o => [o.id, o]));
-            for (const co of cloudObjects) {
-                if (!objMap.has(co.id)) objectsDB.push(co);
-            }
-
-            const probMap = new Map(problemsDB.map(p => [p.id, p]));
-            for (const cp of cloudProblems) {
-                if (!probMap.has(cp.id)) problemsDB.push(cp);
-            }
-
-            localStorage.setItem('requests', JSON.stringify(requests));
-            localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-            localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-            localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
-            updateUI();
-            renderRequests();
-            alert(`✅ Скачано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}`);
-        }
-
-        function exportManual() {
-            const payload = { requests, objects: objectsDB, problems: problemsDB, exportedAt: new Date().toISOString() };
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `elevator_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-        }
-
-        function importManual() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        const reqMap = new Map(requests.map(r => [r.id, r]));
-                        if (data.requests) {
-                            for (const cr of data.requests) {
-                                if (!reqMap.has(cr.id)) requests.push(cr);
-                            }
-                            requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-                        }
-                        const objMap = new Map(objectsDB.map(o => [o.id, o]));
-                        if (data.objects) {
-                            for (const co of data.objects) {
-                                if (!objMap.has(co.id)) objectsDB.push(co);
-                            }
-                        }
-                        const probMap = new Map(problemsDB.map(p => [p.id, p]));
-                        if (data.problems) {
-                            for (const cp of data.problems) {
-                                if (!probMap.has(cp.id)) problemsDB.push(cp);
-                            }
-                        }
-                        localStorage.setItem('requests', JSON.stringify(requests));
-                        localStorage.setItem('objectsDB', JSON.stringify(objectsDB));
-                        localStorage.setItem('problemsDB', JSON.stringify(problemsDB));
-                        updateUI();
-                        renderRequests();
-                        alert('✅ Импортировано!');
-                    } catch (err) {
-                        alert('❌ Ошибка: ' + err.message);
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
-        function updateStats() {
-            document.getElementById('statTotal').textContent = requests.length;
-            document.getElementById('statObj').textContent = objectsDB.length;
-            document.getElementById('statProb').textContent = problemsDB.length;
-            document.getElementById('lastUpload').textContent = localStorage.getItem(UPLOAD_KEY) ? new Date(localStorage.getItem(UPLOAD_KEY)).toLocaleString('ru-RU') : '—';
-            document.getElementById('lastDownload').textContent = localStorage.getItem(DOWNLOAD_KEY) ? new Date(localStorage.getItem(DOWNLOAD_KEY)).toLocaleString('ru-RU') : '—';
-        }
-
-        function exportToCSV() {
-            const headers = ['Дата', 'Объект', 'Адрес', 'Подъезд', 'Секция', 'Лифт', 'Этаж', 'Проблема', 'Статус', 'Комментарий'];
-            const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'};
-            const rows = requests.map(r => [new Date(r.dateTime).toLocaleString('ru-RU'), r.objectName || '', r.address, r.entrance, r.section || '', r.elevator || '', r.floor || '', r.issue || '', statusMap[r.status], r.comment || '']);
-            const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `zayavki_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-        }
-
-        updateUI();
-        renderRequests();
+        document.querySelectorAll('.tab').forEach(tab => { tab.addEventListener('click', function() { const tabName = this.getAttribute('data-tab'); document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); this.classList.add('active'); ['listTab', 'addTab', 'dbTab', 'syncTab'].forEach(id => document.getElementById(id).classList.add('hidden')); document.getElementById(tabName + 'Tab').classList.remove('hidden'); if (tabName === 'list') renderRequests(); if (tabName === 'add') updateFormDropdowns(); if (tabName === 'db') renderDB(); if (tabName === 'sync') updateStats(); }); });
+        function renderDB() { document.getElementById('objectsList').innerHTML = objectsDB.length === 0 ? '<div class="empty-state">Нет объектов</div>' : objectsDB.map(obj => `<div class="db-item"><div class="db-item-info"><div class="db-item-title">${obj.name}</div><div class="db-item-sub">${obj.address}</div></div><div class="db-item-actions"><button class="btn-small btn-edit" onclick="editObject(${obj.id})">✏️</button><button class="btn-small btn-danger" onclick="deleteObject(${obj.id})">🗑️</button></div></div>`).join(''); document.getElementById('problemsList').innerHTML = problemsDB.length === 0 ? '<div class="empty-state">Нет проблем</div>' : problemsDB.map(prob => `<div class="db-item" style="border-left-color: #FF9800;"><div class="db-item-info"><div class="db-item-title">${prob.name}</div></div><div class="db-item-actions"><button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button><button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button></div></div>`).join(''); }
+        function updateFormDropdowns() { document.getElementById('objectSelect').innerHTML = '<option value="">-- Выберите --</option>' + objectsDB.map(obj => `<option value="${obj.id}" data-address="${obj.address}">${obj.name}</option>`).join(''); document.getElementById('problemSelect').innerHTML = '<option value="">-- Выберите --</option>' + problemsDB.map(prob => `<option value="${prob.name}">${prob.name}</option>`).join(''); }
+        function autoFillAddress() { const select = document.getElementById('objectSelect'); const selected = select.options[select.selectedIndex]; if (selected.getAttribute('data-address')) { document.getElementById('address').value = selected.getAttribute('data-address'); } }
+        function autoFillIssue() { const val = document.getElementById('problemSelect').value; if (val) document.getElementById('issue').value = val; }
+        function saveObject() { const name = document.getElementById('newObjName').value.trim(); const address = document.getElementById('newObjAddress').value.trim(); const editId = document.getElementById('editObjId').value; if (!name || !address) { alert('Заполните поля'); return; } if (editId) { const obj = objectsDB.find(o => o.id == editId); obj.name = name; obj.address = address; document.getElementById('editObjId').value = ''; document.getElementById('saveObjBtn').textContent = '➕ Добавить'; } else { objectsDB.push({ id: Date.now(), name, address }); } localStorage.setItem('objectsDB', JSON.stringify(objectsDB)); document.getElementById('newObjName').value = ''; document.getElementById('newObjAddress').value = ''; renderDB(); }
+        function editObject(id) { const obj = objectsDB.find(o => o.id === id); document.getElementById('newObjName').value = obj.name; document.getElementById('newObjAddress').value = obj.address; document.getElementById('editObjId').value = id; document.getElementById('saveObjBtn').textContent = '💾 Сохранить'; }
+        function deleteObject(id) { if (confirm('Удалить?')) { objectsDB = objectsDB.filter(o => o.id !== id); localStorage.setItem('objectsDB', JSON.stringify(objectsDB)); renderDB(); } }
+        function saveProblem() { const name = document.getElementById('newProblemName').value.trim(); const editId = document.getElementById('editProblemId').value; if (!name) { alert('Введите название'); return; } if (editId) { const prob = problemsDB.find(p => p.id == editId); prob.name = name; document.getElementById('editProblemId').value = ''; document.getElementById('saveProbBtn').textContent = '➕ Добавить'; } else { problemsDB.push({ id: Date.now(), name }); } localStorage.setItem('problemsDB', JSON.stringify(problemsDB)); document.getElementById('newProblemName').value = ''; renderDB(); }
+        function editProblem(id) { const prob = problemsDB.find(p => p.id === id); document.getElementById('newProblemName').value = prob.name; document.getElementById('editProblemId').value = id; document.getElementById('saveProbBtn').textContent = '💾 Сохранить'; }
+        function deleteProblem(id) { if (confirm('Удалить?')) { problemsDB = problemsDB.filter(p => p.id !== id); localStorage.setItem('problemsDB', JSON.stringify(problemsDB)); renderDB(); } }
+        document.getElementById('requestForm').addEventListener('submit', function(e) { e.preventDefault(); const objSelect = document.getElementById('objectSelect'); const objName = objSelect.options[objSelect.selectedIndex].text; const request = { id: Date.now(), dateTime: document.getElementById('dateTime').value, objectName: objName !== '-- Выберите --' ? objName : '', address: document.getElementById('address').value, entrance: document.getElementById('entrance').value, section: document.getElementById('section').value, elevator: document.getElementById('elevator').value, floor: document.getElementById('floor').value, issue: document.getElementById('issue').value, status: document.getElementById('status').value, comment: document.getElementById('comment').value, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }; requests.unshift(request); localStorage.setItem('requests', JSON.stringify(requests)); this.reset(); const now2 = new Date(); now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset()); document.getElementById('dateTime').value = now2.toISOString().slice(0, 16); document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelector('[data-tab="list"]').classList.add('active'); document.getElementById('addTab').classList.add('hidden'); document.getElementById('listTab').classList.remove('hidden'); renderRequests(); alert('✅ Сохранено'); });
+        function renderRequests() { const filter = document.getElementById('filterStatus').value; const search = document.getElementById('searchInput').value.toLowerCase(); let filtered = requests.filter(r => { const matchStatus = filter === 'all' || r.status === filter; const matchSearch = !search || (r.address && r.address.toLowerCase().includes(search)) || (r.elevator && r.elevator.toLowerCase().includes(search)) || (r.objectName && r.objectName.toLowerCase().includes(search)); return matchStatus && matchSearch; }); const container = document.getElementById('requestsList'); if (filtered.length === 0) { container.innerHTML = '<div class="empty-state">Нет заявок</div>'; return; } container.innerHTML = filtered.map(r => { const date = new Date(r.dateTime).toLocaleString('ru-RU'); const statusText = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}[r.status]; return `<div class="request-card"><div class="request-header"><span class="request-date">${date}</span><span class="status-badge status-${r.status}">${statusText}</span></div><div class="request-info">${r.objectName ? `<strong> ${r.objectName}</strong><br>` : ''}<strong>📍 ${r.address}</strong><br>Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br><strong>Проблема:</strong> ${r.issue || 'Не указана'}${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}</div><div class="request-actions"><button onclick="changeStatus(${r.id})">Статус</button><button onclick="deleteRequest(${r.id})" class="btn-danger">Удалить</button></div></div>`; }).join(''); }
+        function changeStatus(id) { const request = requests.find(r => r.id === id); const statuses = ['new', 'progress', 'done']; const idx = statuses.indexOf(request.status); request.status = statuses[(idx + 1) % statuses.length]; request.updatedAt = new Date().toISOString(); localStorage.setItem('requests', JSON.stringify(requests)); renderRequests(); }
+        function deleteRequest(id) { if (confirm('Удалить?')) { requests = requests.filter(r => r.id !== id); localStorage.setItem('requests', JSON.stringify(requests)); renderRequests(); } }
+        function updateUI() { const statusEl = document.getElementById('syncStatus'); if (yandexToken) { statusEl.className = 'sync-status sync-ok'; statusEl.textContent = '☁️ Подключено'; document.getElementById('notConnected').classList.add('hidden'); document.getElementById('connected').classList.remove('hidden'); document.getElementById('clientIdInput').value = YANDEX_CLIENT_ID; } else { statusEl.className = 'sync-status sync-off'; statusEl.textContent = '☁️ Не подключено'; document.getElementById('notConnected').classList.remove('hidden'); document.getElementById('connected').classList.add('hidden'); } updateStats(); }
+        function saveClientId() { YANDEX_CLIENT_ID = document.getElementById('clientIdInput').value.trim(); if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; } localStorage.setItem(CLIENT_ID_KEY, YANDEX_CLIENT_ID); alert('✅ Сохранено'); }
+        function startOAuth() { if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; } const redirectUri = window.location.origin + window.location.pathname; window.location.href = `https://oauth.yandex.ru/authorize?response_type=token&client_id=${YANDEX_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}`; }
+        function disconnect() { if (confirm('Отключить?')) { localStorage.removeItem(YANDEX_TOKEN_KEY); yandexToken = ''; updateUI(); } }
+        async function uploadToYandex() { if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; } const btn = document.getElementById('btnUpload'); const original = btn.textContent; btn.textContent = '⏳ Загрузка...'; btn.disabled = true; try { const uploadUrl = `https://cloud-api.yandex.net/v1/disk/resources/upload?path=${encodeURIComponent(FILE_PATH)}&overwrite=true`; const resp = await fetch(uploadUrl, { headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' } }); if (!resp.ok) throw new Error(`Ошибка: ${resp.status}`); const data = await resp.json(); const payload = { requests, objects: objectsDB, problems: problemsDB, lastSync: new Date().toISOString() }; const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }); const uploadResp = await fetch(data.href, { method: 'PUT', body: blob }); if (!uploadResp.ok) throw new Error(`HTTP ${uploadResp.status}`); localStorage.setItem(UPLOAD_KEY, new Date().toISOString()); updateStats(); alert('✅ Загружено!'); } catch (e) { alert('❌ Ошибка: ' + e.message); } finally { btn.textContent = original; btn.disabled = false; } }
+        async function downloadFromYandex() { if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; } const btn = document.getElementById('btnDownload'); const original = btn.textContent; btn.textContent = '⏳ Скачивание...'; btn.disabled = true; try { const checkResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`, { headers: { 'Authorization': `OAuth ${yandexToken}` } }); if (!checkResp.ok) { if (checkResp.status === 404) throw new Error('FILE_NOT_FOUND'); throw new Error(`Ошибка: ${checkResp.status}`); } const urlResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`, { headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' } }); if (!urlResp.ok) throw new Error(`Ошибка: ${urlResp.status}`); const urlData = await urlResp.json(); const fileResp = await fetch(urlData.href, { method: 'GET', mode: 'no-cors' }); if (!fileResp.ok) throw new Error(`HTTP ${fileResp.status}`); const blob = await fileResp.blob(); const text = await blob.text(); const cloudData = JSON.parse(text); processCloudData(cloudData); } catch (e) { if (e.message === 'FILE_NOT_FOUND' || e.message.includes('404')) { alert('️ Файл не найден.\n\nСначала загрузите:\n1. Откройте на первом устройстве\n2. Нажмите "️ Загрузить"'); } else { console.error(e); alert('❌ Ошибка: ' + e.message + '\n\nПопробуйте:\n1. Обновить страницу\n2. Переподключить Яндекс.Диск\n3. Использовать ручной экспорт/импорт'); } } finally { btn.textContent = original; btn.disabled = false; } }
+        function processCloudData(cloudData) { let cloudRequests = [], cloudObjects = [], cloudProblems = []; if (Array.isArray(cloudData)) { cloudRequests = cloudData; } else { cloudRequests = cloudData.requests || []; cloudObjects = cloudData.objects || []; cloudProblems = cloudData.problems || []; } const reqMap = new Map(requests.map(r => [r.id, r])); for (const cr of cloudRequests) { if (reqMap.has(cr.id)) { const lr = reqMap.get(cr.id); if (cr.updatedAt && (!lr.updatedAt || cr.updatedAt > lr.updatedAt)) Object.assign(lr, cr); } else { requests.push(cr); } } requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)); const objMap = new Map(objectsDB.map(o => [o.id, o])); for (const co of cloudObjects) { if (!objMap.has(co.id)) objectsDB.push(co); } const probMap = new Map(problemsDB.map(p => [p.id, p])); for (const cp of cloudProblems) { if (!probMap.has(cp.id)) problemsDB.push(cp); } localStorage.setItem('requests', JSON.stringify(requests)); localStorage.setItem('objectsDB', JSON.stringify(objectsDB)); localStorage.setItem('problemsDB', JSON.stringify(problemsDB)); localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString()); updateUI(); renderRequests(); alert(`✅ Скачано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}`); }
+        function exportManual() { const payload = { requests, objects: objectsDB, problems: problemsDB, exportedAt: new Date().toISOString() }; const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `elevator_${new Date().toISOString().split('T')[0]}.json`; link.click(); }
+        function importManual() { const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.onchange = function(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(event) { try { const data = JSON.parse(event.target.result); const reqMap = new Map(requests.map(r => [r.id, r])); if (data.requests) { for (const cr of data.requests) { if (!reqMap.has(cr.id)) requests.push(cr); } requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)); } const objMap = new Map(objectsDB.map(o => [o.id, o])); if (data.objects) { for (const co of data.objects) { if (!objMap.has(co.id)) objectsDB.push(co); } } const probMap = new Map(problemsDB.map(p => [p.id, p])); if (data.problems) { for (const cp of data.problems) { if (!probMap.has(cp.id)) problemsDB.push(cp); } } localStorage.setItem('requests', JSON.stringify(requests)); localStorage.setItem('objectsDB', JSON.stringify(objectsDB)); localStorage.setItem('problemsDB', JSON.stringify(problemsDB)); updateUI(); renderRequests(); alert('✅ Импортировано!'); } catch (err) { alert('❌ Ошибка: ' + err.message); } }; reader.readAsText(file); }; input.click(); }
+        function updateStats() { document.getElementById('statTotal').textContent = requests.length; document.getElementById('statObj').textContent = objectsDB.length; document.getElementById('statProb').textContent = problemsDB.length; document.getElementById('lastUpload').textContent = localStorage.getItem(UPLOAD_KEY) ? new Date(localStorage.getItem(UPLOAD_KEY)).toLocaleString('ru-RU') : '—'; document.getElementById('lastDownload').textContent = localStorage.getItem(DOWNLOAD_KEY) ? new Date(localStorage.getItem(DOWNLOAD_KEY)).toLocaleString('ru-RU') : '—'; }
+        function exportToCSV() { const headers = ['Дата', 'Объект', 'Адрес', 'Подъезд', 'Секция', 'Лифт', 'Этаж', 'Проблема', 'Статус', 'Комментарий']; const statusMap = {new: 'Новая', progress: 'В работе', done: 'Выполнена'}; const rows = requests.map(r => [new Date(r.dateTime).toLocaleString('ru-RU'), r.objectName || '', r.address, r.entrance, r.section || '', r.elevator || '', r.floor || '', r.issue || '', statusMap[r.status], r.comment || '']); const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n'); const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `zayavki_${new Date().toISOString().split('T')[0]}.csv`; link.click(); }
+        updateUI(); renderRequests();
     </script>
 </body>
 </html>
