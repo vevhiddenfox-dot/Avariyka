@@ -39,7 +39,6 @@
         .btn-success { background: #4CAF50; }
         .btn-warning { background: #FF9800; }
         .btn-danger { background: #f44336; }
-        .btn-info { background: #00BCD4; }
         .btn-small { padding: 6px 10px; font-size: 13px; width: auto; margin: 0 4px 0 0; }
         .btn-edit { background: #FF9800; }
         .request-card {
@@ -80,20 +79,15 @@
             background: white; padding: 2px 6px; border-radius: 4px;
             font-family: monospace; font-size: 12px;
         }
-        .sync-info {
-            background: #FFF8E1; padding: 12px; border-radius: 8px;
-            margin-bottom: 16px; font-size: 13px; color: #F57F17; line-height: 1.5;
-        }
         .instruction-box {
-            background: #E8F5E9; padding: 16px; border-radius: 8px;
-            margin: 12px 0; border-left: 4px solid #4CAF50;
+            background: #FFF8E1; padding: 14px; border-radius: 8px;
+            margin: 12px 0; border-left: 4px solid #FF9800;
+            font-size: 13px; line-height: 1.6;
         }
-        .instruction-box ol {
-            margin: 12px 0; padding-left: 24px;
-        }
-        .instruction-box li {
-            margin: 8px 0; line-height: 1.6;
-        }
+        .instruction-box strong { color: #E65100; }
+        .instruction-box ol { margin: 10px 0; padding-left: 24px; }
+        .instruction-box li { margin: 6px 0; }
+        .instruction-box a { color: #1565C0; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -117,7 +111,7 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder=" Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
+            <input type="text" id="searchInput" placeholder="🔍 Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
         
@@ -213,39 +207,39 @@
             
             <div id="connected" class="hidden">
                 <div class="info-box">
-                    ✅ <strong>Подключено</strong><br>
+                    ✅ <strong>Подключено к Яндекс.Диску</strong><br>
                     Файл: <code>/elevator_data.json</code>
                 </div>
                 
                 <div class="instruction-box">
-                    <strong>📤 Как загрузить данные на Яндекс.Диск:</strong>
+                    <strong>📤 ШАГ 1. Загрузить данные на Яндекс.Диск:</strong>
                     <ol>
-                        <li>Нажмите кнопку <strong>"⬆️ Загрузить"</strong></li>
-                        <li>Данные автоматически сохранятся в файле <code>/elevator_data.json</code></li>
+                        <li>Нажмите кнопку <strong>"⬆️ Загрузить на Яндекс.Диск"</strong> ниже</li>
+                        <li>Данные сохранятся в файле <code>elevator_data.json</code> в корне вашего Яндекс.Диска</li>
                     </ol>
                 </div>
                 
                 <div class="instruction-box">
-                    <strong>📥 Как скачать данные с Яндекс.Диска:</strong>
+                    <strong>📥 ШАГ 2. Скачать данные на другом устройстве:</strong>
                     <ol>
-                        <li>Откройте <a href="https://disk.yandex.ru" target="_blank">Яндекс.Диск</a> в браузере</li>
+                        <li>Откройте <a href="https://disk.yandex.ru" target="_blank">disk.yandex.ru</a> в браузере</li>
+                        <li>Войдите в свой аккаунт</li>
                         <li>Найдите файл <code>elevator_data.json</code></li>
-                        <li>Скачайте его на устройство</li>
-                        <li>Вернитесь в программу</li>
-                        <li>Нажмите <strong>"📥 Импорт JSON"</strong></li>
+                        <li>Нажмите на него → <strong>Скачать</strong></li>
+                        <li>Вернитесь в эту программу</li>
+                        <li>Нажмите <strong>"📥 Импорт JSON"</strong> ниже</li>
                         <li>Выберите скачанный файл</li>
-                        <li>Данные полностью заменятся</li>
                     </ol>
                 </div>
                 
                 <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить на Яндекс.Диск</button>
-                <button onclick="importManual()" class="btn-warning">📥 Импорт JSON (после скачивания)</button>
-                <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON (резервная копия)</button>
-                <button onclick="exportToCSV()" class="btn-secondary">📥 CSV</button>
-                <button onclick="disconnect()" class="btn-danger"> Отключить</button>
+                <button onclick="importManual()" class="btn-warning">📥 Импорт JSON (после скачивания с диска)</button>
+                <button onclick="exportManual()" class="btn-secondary">📤 Экспорт JSON (резервная копия)</button>
+                <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV</button>
+                <button onclick="disconnect()" class="btn-danger"> Отключить Яндекс.Диск</button>
                 
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
-                    📊 <strong>Статистика:</strong><br>
+                     <strong>Статистика:</strong><br>
                     Заявок: <span id="statTotal">0</span><br>
                     Объектов: <span id="statObj">0</span> | Проблем: <span id="statProb">0</span><br>
                     Последняя загрузка: <span id="lastUpload">—</span>
@@ -406,7 +400,7 @@
                 const prob = problemsDB.find(p => p.id == editId);
                 prob.name = name;
                 document.getElementById('editProblemId').value = '';
-                document.getElementById('saveProbBtn').textContent = ' Добавить';
+                document.getElementById('saveProbBtn').textContent = '➕ Добавить';
             } else {
                 problemsDB.push({ id: Date.now(), name });
             }
@@ -489,7 +483,7 @@
                         </div>
                         <div class="request-info">
                             ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
-                            <strong>📍 ${r.address}</strong><br>
+                            <strong> ${r.address}</strong><br>
                             Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
                             <strong>Проблема:</strong> ${r.issue || 'Не указана'}
                             ${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}
@@ -578,7 +572,7 @@
                 if (!uploadResp.ok) throw new Error(`HTTP ${uploadResp.status}`);
                 localStorage.setItem(UPLOAD_KEY, new Date().toISOString());
                 updateStats();
-                alert('✅ Загружено на Яндекс.Диск!\n\nТеперь на другом устройстве:\n1. Откройте Яндекс.Диск в браузере\n2. Скачайте файл elevator_data.json\n3. Нажмите "📥 Импорт JSON"');
+                alert('✅ Загружено на Яндекс.Диск!\n\nФайл: elevator_data.json\n\nТеперь на другом устройстве:\n1. Откройте disk.yandex.ru\n2. Скачайте файл\n3. Нажмите "📥 Импорт JSON"');
             } catch (e) {
                 alert('❌ Ошибка: ' + e.message);
             } finally {
@@ -611,7 +605,6 @@
                     try {
                         const data = JSON.parse(event.target.result);
                         
-                        // Полная замена данных
                         if (data.requests) requests = data.requests;
                         if (data.objects) objectsDB = data.objects;
                         if (data.problems) problemsDB = data.problems;
