@@ -13,7 +13,6 @@
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
         h3 { font-size: 16px; margin: 20px 0 10px 0; color: #555; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-        
         .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab {
             flex: 1; min-width: 80px; padding: 10px 8px; background: white;
@@ -21,7 +20,6 @@
             text-align: center; cursor: pointer; font-weight: 600; font-size: 13px;
         }
         .tab.active { background: #2196F3; color: white; border-color: #2196F3; }
-        
         .form-group { margin-bottom: 14px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; font-size: 14px; }
         input, select, textarea {
@@ -30,7 +28,6 @@
         }
         input[required], select[required], textarea[required] { border-left: 4px solid #f44336; }
         textarea { resize: vertical; min-height: 70px; }
-        
         button {
             width: 100%; padding: 14px; background: #2196F3; color: white;
             border: none; border-radius: 8px; font-size: 16px;
@@ -45,7 +42,6 @@
         .btn-info { background: #00BCD4; }
         .btn-small { padding: 6px 10px; font-size: 13px; width: auto; margin: 0 4px 0 0; }
         .btn-edit { background: #FF9800; }
-        
         .request-card {
             background: white; padding: 14px; border-radius: 12px;
             margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -60,16 +56,13 @@
         .request-info strong { color: #333; }
         .request-actions { display: flex; gap: 8px; margin-top: 12px; }
         .request-actions button { flex: 1; padding: 8px; font-size: 14px; margin: 0; }
-        
         .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
         .filter-bar select { flex: 1; }
         .empty-state { text-align: center; padding: 40px 20px; color: #999; }
         .hidden { display: none; }
-        
         .sync-status { padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; text-align: center; }
         .sync-ok { background: #E8F5E9; color: #2E7D32; }
         .sync-off { background: #FFF3E0; color: #E65100; }
-        
         .db-item {
             background: white; padding: 12px; border-radius: 8px;
             margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
@@ -79,7 +72,6 @@
         .db-item-title { font-weight: 600; font-size: 15px; }
         .db-item-sub { font-size: 13px; color: #666; margin-top: 4px; }
         .db-item-actions { display: flex; gap: 4px; }
-        
         .info-box {
             background: #E3F2FD; padding: 12px; border-radius: 8px;
             margin-bottom: 16px; font-size: 13px; color: #1565C0; line-height: 1.5;
@@ -96,7 +88,7 @@
 </head>
 <body>
     <div class="container">
-        <h1> Аварийные заявки</h1>
+        <h1>🛗 Аварийные заявки</h1>
         <div id="syncStatus" class="sync-status sync-off">☁️ Облако не подключено</div>
         
         <div class="tabs">
@@ -115,8 +107,7 @@
                     <option value="done">Выполненные</option>
                 </select>
             </div>
-            <input type="text" id="searchInput" placeholder="🔍 Поиск по адресу, лифту..." 
-                   oninput="renderRequests()" style="margin-bottom: 16px;">
+            <input type="text" id="searchInput" placeholder="🔍 Поиск..." oninput="renderRequests()" style="margin-bottom: 16px;">
             <div id="requestsList"></div>
         </div>
         
@@ -129,38 +120,38 @@
                 <div class="form-group">
                     <label>Объект *</label>
                     <select id="objectSelect" onchange="autoFillAddress()" required>
-                        <option value="">-- Выберите объект из базы --</option>
+                        <option value="">-- Выберите --</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Адрес *</label>
-                    <input type="text" id="address" placeholder="Заполнится автоматически" required>
+                    <input type="text" id="address" required>
                 </div>
                 <div class="form-group">
                     <label>Подъезд *</label>
-                    <input type="text" id="entrance" placeholder="Например: 1" required>
+                    <input type="text" id="entrance" required>
                 </div>
                 <div class="form-group">
                     <label>Секция</label>
-                    <input type="text" id="section" placeholder="Необязательно">
+                    <input type="text" id="section">
                 </div>
                 <div class="form-group">
-                    <label>Лифт (название/номер)</label>
-                    <input type="text" id="elevator" placeholder="Например: Л-1">
+                    <label>Лифт</label>
+                    <input type="text" id="elevator">
                 </div>
                 <div class="form-group">
                     <label>Этаж</label>
-                    <input type="text" id="floor" placeholder="Необязательно">
+                    <input type="text" id="floor">
                 </div>
                 <div class="form-group">
                     <label>Вид проблемы</label>
                     <select id="problemSelect" onchange="autoFillIssue()">
-                        <option value="">-- Выберите или опишите ниже --</option>
+                        <option value="">-- Выберите --</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Характеристики / Описание</label>
-                    <textarea id="issue" placeholder="Подробности неисправности..."></textarea>
+                    <label>Описание</label>
+                    <textarea id="issue"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Статус *</label>
@@ -172,27 +163,26 @@
                 </div>
                 <div class="form-group">
                     <label>Комментарий</label>
-                    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
+                    <textarea id="comment"></textarea>
                 </div>
-                <button type="submit">💾 Сохранить заявку</button>
+                <button type="submit">💾 Сохранить</button>
             </form>
         </div>
         
         <div id="dbTab" class="hidden">
-            <h3>🏢 Объекты и адреса</h3>
+            <h3>🏢 Объекты</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
-                <input type="text" id="newObjName" placeholder="Название объекта" style="margin-bottom: 8px;">
+                <input type="text" id="newObjName" placeholder="Название" style="margin-bottom: 8px;">
                 <input type="text" id="newObjAddress" placeholder="Адрес" style="margin-bottom: 8px;">
                 <input type="hidden" id="editObjId">
-                <button onclick="saveObject()" id="saveObjBtn">➕ Добавить объект</button>
+                <button onclick="saveObject()" id="saveObjBtn">➕ Добавить</button>
             </div>
             <div id="objectsList"></div>
-
-            <h3>⚠️ Виды проблем</h3>
+            <h3>⚠️ Проблемы</h3>
             <div class="form-group" style="background: white; padding: 12px; border-radius: 8px;">
-                <input type="text" id="newProblemName" placeholder="Напр. Застревание" style="margin-bottom: 8px;">
+                <input type="text" id="newProblemName" placeholder="Название" style="margin-bottom: 8px;">
                 <input type="hidden" id="editProblemId">
-                <button onclick="saveProblem()" id="saveProbBtn">➕ Добавить проблему</button>
+                <button onclick="saveProblem()" id="saveProbBtn">➕ Добавить</button>
             </div>
             <div id="problemsList"></div>
         </div>
@@ -200,39 +190,36 @@
         <div id="syncTab" class="hidden">
             <div id="notConnected">
                 <div class="info-box">
-                    <strong>🔑 Подключение Яндекс.Диска:</strong><br>
-                    Введите ваш Client ID и нажмите "Войти через Яндекс".
+                    <strong>🔑 Подключение:</strong><br>
+                    Введите Client ID и нажмите "Войти".
                 </div>
                 <div class="form-group">
                     <label>Client ID</label>
-                    <input type="text" id="clientIdInput" placeholder="f7ed86e34716466e917800e1fcc8682f">
+                    <input type="text" id="clientIdInput">
                 </div>
-                <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить Client ID</button>
-                <button onclick="startOAuth()">🔐 Войти через Яндекс</button>
+                <button onclick="saveClientId()" class="btn-secondary">💾 Сохранить</button>
+                <button onclick="startOAuth()">🔐 Войти</button>
             </div>
             
             <div id="connected" class="hidden">
                 <div class="info-box">
-                    ✅ <strong>Подключено к Яндекс.Диску</strong><br>
+                    ✅ <strong>Подключено</strong><br>
                     Файл: <code>/elevator_data.json</code>
                 </div>
-                
                 <div class="sync-info">
-                    <strong>💡 Как пользоваться:</strong><br>
-                    • <strong>⬆️ Загрузить</strong> — отправить данные на Яндекс.Диск<br>
-                    • <strong>⬇️ Скачать</strong> — получить данные с Яндекс.Диска
+                    <strong>💡 Синхронизация:</strong><br>
+                    ⬆️ Загрузить — отправить на Яндекс.Диск<br>
+                    ⬇️ Скачать — получить с Яндекс.Диска
                 </div>
-                
-                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить на Яндекс.Диск</button>
-                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">️ Скачать с Яндекс.Диска</button>
-                <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON (вручную)</button>
-                <button onclick="importManual()" class="btn-warning"> Импорт JSON (вручную)</button>
-                <button onclick="exportToCSV()" class="btn-secondary">📥 Экспорт в CSV</button>
-                <button onclick="disconnect()" class="btn-danger">🚪 Отключить Яндекс.Диск</button>
-                
+                <button onclick="uploadToYandex()" class="btn-success" id="btnUpload">⬆️ Загрузить</button>
+                <button onclick="downloadFromYandex()" class="btn-info" id="btnDownload">⬇️ Скачать</button>
+                <button onclick="exportManual()" class="btn-warning">📤 Экспорт JSON</button>
+                <button onclick="importManual()" class="btn-warning">📥 Импорт JSON</button>
+                <button onclick="exportToCSV()" class="btn-secondary">📥 CSV</button>
+                <button onclick="disconnect()" class="btn-danger"> Отключить</button>
                 <div style="margin-top: 16px; padding: 12px; background: #FFF3E0; border-radius: 8px; font-size: 13px;">
                     📊 <strong>Статистика:</strong><br>
-                    Всего заявок: <span id="statTotal">0</span><br>
+                    Заявок: <span id="statTotal">0</span><br>
                     Объектов: <span id="statObj">0</span> | Проблем: <span id="statProb">0</span><br>
                     Загрузка: <span id="lastUpload">—</span><br>
                     Скачивание: <span id="lastDownload">—</span>
@@ -282,7 +269,7 @@
                     localStorage.setItem(YANDEX_TOKEN_KEY, token);
                     window.history.replaceState({}, '', window.location.pathname);
                     updateUI();
-                    alert('✅ Яндекс.Диск подключён!');
+                    alert('✅ Подключено!');
                 }
             }
         }
@@ -303,11 +290,9 @@
         });
 
         function renderDB() {
-            const objList = document.getElementById('objectsList');
-            if (objectsDB.length === 0) {
-                objList.innerHTML = '<div class="empty-state">Нет объектов</div>';
-            } else {
-                objList.innerHTML = objectsDB.map(obj => `
+            document.getElementById('objectsList').innerHTML = objectsDB.length === 0 ? 
+                '<div class="empty-state">Нет объектов</div>' :
+                objectsDB.map(obj => `
                     <div class="db-item">
                         <div class="db-item-info">
                             <div class="db-item-title">${obj.name}</div>
@@ -319,25 +304,22 @@
                         </div>
                     </div>
                 `).join('');
-            }
-            const probList = document.getElementById('problemsList');
-            if (problemsDB.length === 0) {
-                probList.innerHTML = '<div class="empty-state">Нет проблем</div>';
-            } else {
-                probList.innerHTML = problemsDB.map(prob => `
+            
+            document.getElementById('problemsList').innerHTML = problemsDB.length === 0 ?
+                '<div class="empty-state">Нет проблем</div>' :
+                problemsDB.map(prob => `
                     <div class="db-item" style="border-left-color: #FF9800;">
                         <div class="db-item-info"><div class="db-item-title">${prob.name}</div></div>
                         <div class="db-item-actions">
                             <button class="btn-small btn-edit" onclick="editProblem(${prob.id})">✏️</button>
-                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">🗑️</button>
+                            <button class="btn-small btn-danger" onclick="deleteProblem(${prob.id})">️</button>
                         </div>
                     </div>
                 `).join('');
-            }
         }
 
         function updateFormDropdowns() {
-            document.getElementById('objectSelect').innerHTML = '<option value="">-- Выберите объект --</option>' + 
+            document.getElementById('objectSelect').innerHTML = '<option value="">-- Выберите --</option>' + 
                 objectsDB.map(obj => `<option value="${obj.id}" data-address="${obj.address}">${obj.name}</option>`).join('');
             document.getElementById('problemSelect').innerHTML = '<option value="">-- Выберите --</option>' + 
                 problemsDB.map(prob => `<option value="${prob.name}">${prob.name}</option>`).join('');
@@ -365,7 +347,7 @@
                 const obj = objectsDB.find(o => o.id == editId);
                 obj.name = name; obj.address = address;
                 document.getElementById('editObjId').value = '';
-                document.getElementById('saveObjBtn').textContent = '➕ Добавить объект';
+                document.getElementById('saveObjBtn').textContent = '➕ Добавить';
             } else {
                 objectsDB.push({ id: Date.now(), name, address });
             }
@@ -380,7 +362,7 @@
             document.getElementById('newObjName').value = obj.name;
             document.getElementById('newObjAddress').value = obj.address;
             document.getElementById('editObjId').value = id;
-            document.getElementById('saveObjBtn').textContent = '💾 Сохранить';
+            document.getElementById('saveObjBtn').textContent = ' Сохранить';
         }
 
         function deleteObject(id) {
@@ -412,7 +394,7 @@
             const prob = problemsDB.find(p => p.id === id);
             document.getElementById('newProblemName').value = prob.name;
             document.getElementById('editProblemId').value = id;
-            document.getElementById('saveProbBtn').textContent = ' Сохранить';
+            document.getElementById('saveProbBtn').textContent = '💾 Сохранить';
         }
 
         function deleteProblem(id) {
@@ -430,7 +412,7 @@
             const request = {
                 id: Date.now(),
                 dateTime: document.getElementById('dateTime').value,
-                objectName: objName !== '-- Выберите объект --' ? objName : '',
+                objectName: objName !== '-- Выберите --' ? objName : '',
                 address: document.getElementById('address').value,
                 entrance: document.getElementById('entrance').value,
                 section: document.getElementById('section').value,
@@ -453,7 +435,7 @@
             document.getElementById('addTab').classList.add('hidden');
             document.getElementById('listTab').classList.remove('hidden');
             renderRequests();
-            alert('✅ Заявка сохранена');
+            alert('✅ Сохранено');
         });
 
         function renderRequests() {
@@ -482,7 +464,7 @@
                         </div>
                         <div class="request-info">
                             ${r.objectName ? `<strong>🏢 ${r.objectName}</strong><br>` : ''}
-                            <strong>📍 ${r.address}</strong><br>
+                            <strong> ${r.address}</strong><br>
                             Подъезд: ${r.entrance}${r.section ? ' | Секция: ' + r.section : ''}${r.elevator ? ' | Лифт: ' + r.elevator : ''}${r.floor ? ' | Эт: ' + r.floor : ''}<br>
                             <strong>Проблема:</strong> ${r.issue || 'Не указана'}
                             ${r.comment ? `<br><strong>Комментарий:</strong> ${r.comment}` : ''}
@@ -518,13 +500,13 @@
             const statusEl = document.getElementById('syncStatus');
             if (yandexToken) {
                 statusEl.className = 'sync-status sync-ok';
-                statusEl.textContent = '☁️ Подключено к Яндекс.Диску';
+                statusEl.textContent = '☁️ Подключено';
                 document.getElementById('notConnected').classList.add('hidden');
                 document.getElementById('connected').classList.remove('hidden');
                 document.getElementById('clientIdInput').value = YANDEX_CLIENT_ID;
             } else {
                 statusEl.className = 'sync-status sync-off';
-                statusEl.textContent = '☁️ Облако не подключено';
+                statusEl.textContent = '️ Не подключено';
                 document.getElementById('notConnected').classList.remove('hidden');
                 document.getElementById('connected').classList.add('hidden');
             }
@@ -535,7 +517,7 @@
             YANDEX_CLIENT_ID = document.getElementById('clientIdInput').value.trim();
             if (!YANDEX_CLIENT_ID) { alert('Введите Client ID'); return; }
             localStorage.setItem(CLIENT_ID_KEY, YANDEX_CLIENT_ID);
-            alert('✅ Client ID сохранён');
+            alert('✅ Сохранено');
         }
 
         function startOAuth() {
@@ -571,7 +553,7 @@
                 if (!uploadResp.ok) throw new Error(`HTTP ${uploadResp.status}`);
                 localStorage.setItem(UPLOAD_KEY, new Date().toISOString());
                 updateStats();
-                alert('✅ Загружено на Яндекс.Диск!');
+                alert('✅ Загружено!');
             } catch (e) {
                 alert('❌ Ошибка: ' + e.message);
             } finally {
@@ -584,10 +566,10 @@
             if (!yandexToken) { alert('Подключите Яндекс.Диск'); return; }
             const btn = document.getElementById('btnDownload');
             const original = btn.textContent;
-            btn.textContent = ' Скачивание...';
+            btn.textContent = '⏳ Скачивание...';
             btn.disabled = true;
             try {
-                // Проверяем существование файла
+                // Проверяем файл
                 const checkResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources?path=${encodeURIComponent(FILE_PATH)}`, {
                     headers: { 'Authorization': `OAuth ${yandexToken}` }
                 });
@@ -596,15 +578,16 @@
                     throw new Error(`Ошибка: ${checkResp.status}`);
                 }
 
-                // Получаем ссылку для скачивания
+                // Получаем ссылку
                 const urlResp = await fetch(`https://cloud-api.yandex.net/v1/disk/resources/download?path=${encodeURIComponent(FILE_PATH)}`, {
                     headers: { 'Authorization': `OAuth ${yandexToken}`, 'Accept': 'application/json' }
                 });
                 if (!urlResp.ok) throw new Error(`Ошибка: ${urlResp.status}`);
                 const urlData = await urlResp.json();
                 
-                // Скачиваем файл
-                const fileResp = await fetch(urlData.href);
+                // Скачиваем через прокси для обхода CORS
+                const corsProxy = 'https://api.allorigins.win/raw?url=';
+                const fileResp = await fetch(corsProxy + encodeURIComponent(urlData.href));
                 if (!fileResp.ok) throw new Error(`HTTP ${fileResp.status}`);
                 const text = await fileResp.text();
                 const cloudData = JSON.parse(text);
@@ -612,9 +595,10 @@
                 processCloudData(cloudData);
             } catch (e) {
                 if (e.message === 'FILE_NOT_FOUND' || e.message.includes('404')) {
-                    alert('⚠️ Файл не найден на Яндекс.Диске.\n\nСначала загрузите данные:\n1. Откройте на первом устройстве\n2. Нажмите "⬆️ Загрузить на Яндекс.Диск"');
+                    alert('️ Файл не найден.\n\nСначала загрузите данные:\n1. Откройте на первом устройстве\n2. Нажмите "⬆️ Загрузить"');
                 } else {
-                    alert('❌ Ошибка: ' + e.message);
+                    console.error(e);
+                    alert('⚠️ Автоматическое скачивание недоступно.\n\nИспользуйте ручной метод:\n1. Нажмите "📤 Экспорт JSON" на первом устройстве\n2. Загрузите файл на Яндекс.Диск\n3. Скачайте файл на этом устройстве\n4. Нажмите "📥 Импорт JSON"');
                 }
             } finally {
                 btn.textContent = original;
@@ -632,7 +616,6 @@
                 cloudProblems = cloudData.problems || [];
             }
 
-            // Мердж заявок
             const reqMap = new Map(requests.map(r => [r.id, r]));
             for (const cr of cloudRequests) {
                 if (reqMap.has(cr.id)) {
@@ -644,13 +627,11 @@
             }
             requests.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
 
-            // Мердж объектов
             const objMap = new Map(objectsDB.map(o => [o.id, o]));
             for (const co of cloudObjects) {
                 if (!objMap.has(co.id)) objectsDB.push(co);
             }
 
-            // Мердж проблем
             const probMap = new Map(problemsDB.map(p => [p.id, p]));
             for (const cp of cloudProblems) {
                 if (!probMap.has(cp.id)) problemsDB.push(cp);
@@ -662,7 +643,7 @@
             localStorage.setItem(DOWNLOAD_KEY, new Date().toISOString());
             updateUI();
             renderRequests();
-            alert(`✅ Скачано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}\nПроблем: ${problemsDB.length}`);
+            alert(`✅ Скачано!\nЗаявок: ${requests.length}\nОбъектов: ${objectsDB.length}`);
         }
 
         function exportManual() {
@@ -670,7 +651,7 @@
             const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `elevator_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `elevator_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
         }
 
@@ -711,7 +692,7 @@
                         renderRequests();
                         alert('✅ Импортировано!');
                     } catch (err) {
-                        alert(' Ошибка: ' + err.message);
+                        alert('❌ Ошибка: ' + err.message);
                     }
                 };
                 reader.readAsText(file);
